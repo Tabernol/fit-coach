@@ -1,0 +1,7 @@
+spring.application.name: fit-coach
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/fit_coach?createDatabaseIfNotExist=true
+    username: root
+    password: root
