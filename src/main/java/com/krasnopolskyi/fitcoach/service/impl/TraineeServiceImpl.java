@@ -1,7 +1,7 @@
 package com.krasnopolskyi.fitcoach.service.impl;
 
 import com.krasnopolskyi.fitcoach.dto.RegistrationResponse;
-import com.krasnopolskyi.fitcoach.dto.exception.UserNotFoundException;
+import com.krasnopolskyi.fitcoach.exception.UserNotFoundException;
 import com.krasnopolskyi.fitcoach.dto.trainee.TraineeCreateRequest;
 import com.krasnopolskyi.fitcoach.dto.trainee.TraineeDto;
 import com.krasnopolskyi.fitcoach.entity.Trainee;

@@ -1,4 +1,4 @@
-package com.krasnopolskyi.fitcoach.dto.exception;
+package com.krasnopolskyi.fitcoach.exception;
 
 public class FitCoachException extends Exception{
 

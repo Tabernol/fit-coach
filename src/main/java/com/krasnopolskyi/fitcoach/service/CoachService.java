@@ -3,7 +3,7 @@ package com.krasnopolskyi.fitcoach.service;
 import com.krasnopolskyi.fitcoach.dto.RegistrationResponse;
 import com.krasnopolskyi.fitcoach.dto.coach.CoachCreateRequest;
 import com.krasnopolskyi.fitcoach.dto.coach.CoachDto;
-import com.krasnopolskyi.fitcoach.dto.exception.UserNotFoundException;
+import com.krasnopolskyi.fitcoach.exception.UserNotFoundException;
 
 public interface CoachService {
 

@@ -3,7 +3,7 @@ package com.krasnopolskyi.fitcoach.service.impl;
 import com.krasnopolskyi.fitcoach.dto.RegistrationResponse;
 import com.krasnopolskyi.fitcoach.dto.coach.CoachCreateRequest;
 import com.krasnopolskyi.fitcoach.dto.coach.CoachDto;
-import com.krasnopolskyi.fitcoach.dto.exception.UserNotFoundException;
+import com.krasnopolskyi.fitcoach.exception.UserNotFoundException;
 import com.krasnopolskyi.fitcoach.entity.Coach;
 import com.krasnopolskyi.fitcoach.entity.TrainingType;
 import com.krasnopolskyi.fitcoach.entity.User;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CoachServiceImpl implements CoachService {
     private final CoachRepository repository;
     private final UserService userService;
-
     private final TrainingTypeService trainingTypeService;
 
     public CoachServiceImpl(

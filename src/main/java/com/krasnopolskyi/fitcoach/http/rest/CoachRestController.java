@@ -3,7 +3,7 @@ package com.krasnopolskyi.fitcoach.http.rest;
 import com.krasnopolskyi.fitcoach.dto.RegistrationResponse;
 import com.krasnopolskyi.fitcoach.dto.coach.CoachCreateRequest;
 import com.krasnopolskyi.fitcoach.dto.coach.CoachDto;
-import com.krasnopolskyi.fitcoach.dto.exception.UserNotFoundException;
+import com.krasnopolskyi.fitcoach.exception.UserNotFoundException;
 import com.krasnopolskyi.fitcoach.service.CoachService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
