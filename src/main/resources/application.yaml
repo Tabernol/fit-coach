@@ -5,3 +5,7 @@ spring:
     url: jdbc:mysql://localhost:3306/fit_coach?createDatabaseIfNotExist=true
     username: root
     password: root
+
+  jpa:
+    properties.hibernate:
+      format_sql: true

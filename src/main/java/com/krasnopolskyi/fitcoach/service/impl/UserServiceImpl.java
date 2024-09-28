@@ -1,7 +1,7 @@
 package com.krasnopolskyi.fitcoach.service.impl;
 
-import com.krasnopolskyi.fitcoach.dto.exception.UserNotFoundException;
 import com.krasnopolskyi.fitcoach.entity.User;
+import com.krasnopolskyi.fitcoach.exception.UserNotFoundException;
 import com.krasnopolskyi.fitcoach.repository.UserRepository;
 import com.krasnopolskyi.fitcoach.service.UserService;
 import com.krasnopolskyi.fitcoach.utils.password_generator.PasswordGenerator;
@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User get(String username) throws UserNotFoundException {
         return repository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("Not found user with username " + username));
+                .orElseThrow(() -> new UserNotFoundException("Can't find user with username " + username));
     }
 
     @Override
