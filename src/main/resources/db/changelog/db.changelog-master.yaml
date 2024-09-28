@@ -9,3 +9,5 @@ databaseChangeLog:
       - file: db/changelog/tables/trainer.sql
   - include:
       - file: db/changelog/tables/training.sql
+  - include:
+      - file: db/changelog/data/training_type_default_data.sql
