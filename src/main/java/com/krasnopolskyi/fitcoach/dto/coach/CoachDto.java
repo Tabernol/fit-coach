@@ -11,6 +11,7 @@ import java.util.List;
 public class CoachDto {
     private String firstName;
     private String lastName;
+    private String username;
     private boolean isActive;
     private String specialization;
     List<TraineeDto> trainees;

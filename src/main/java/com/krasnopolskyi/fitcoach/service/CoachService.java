@@ -9,5 +9,6 @@ public interface CoachService {
 
     CoachDto get(String username) throws UserNotFoundException;
     RegistrationResponse create(CoachCreateRequest request);
+    CoachDto update(CoachDto coachDto) throws UserNotFoundException;
     boolean delete(String username);
 }

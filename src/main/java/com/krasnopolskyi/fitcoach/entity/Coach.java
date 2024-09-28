@@ -19,5 +19,7 @@ public class Coach {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private Integer specializationId;
+    @ManyToOne
+    @JoinColumn(name = "specialization_id", referencedColumnName = "id")
+    private TrainingType specialization;
 }

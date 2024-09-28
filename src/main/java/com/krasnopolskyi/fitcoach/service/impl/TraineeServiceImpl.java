@@ -56,7 +56,6 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee trainee = findByUsername(traineeDto.getUsername());
 
         User user = trainee.getUser();
-        user.setUsername(traineeDto.getUsername());
         user.setFirstName(traineeDto.getFirstName());
         user.setLastName(traineeDto.getLastName());
         user.setActive(traineeDto.isActive());
