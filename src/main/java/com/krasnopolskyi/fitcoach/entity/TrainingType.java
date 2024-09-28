@@ -13,5 +13,4 @@ public class TrainingType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String trainingTypeName;
-    private String testField;
 }
