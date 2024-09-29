@@ -10,8 +10,4 @@ class UserServiceImplTest {
     void get() {
     }
 
-    @Test
-    void get2() {
-        throw new RuntimeException();
-    }
 }
