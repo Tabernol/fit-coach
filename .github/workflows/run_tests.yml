@@ -31,6 +31,10 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
+      # Grant execute permission for gradlew
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       # Run Gradle tests
       - name: Run tests
         run: ./gradlew test
