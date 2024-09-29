@@ -12,6 +12,6 @@ class UserServiceImplTest {
 
     @Test
     void get2() {
-//        throw new RuntimeException();
+        throw new RuntimeException();
     }
 }
