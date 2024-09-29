@@ -1,46 +1,61 @@
-name: Test and Validate Pull Requests
+name: Gradle Build and Test
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
-      - dev
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8
+        options: --health-cmd "mysqladmin ping --silent" --health-interval 10s --health-timeout 5s --health-retries 3
+        env:
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: test_db
+        ports:
+          - 3306:3306
+
     steps:
-      # Checkout the repository
-      - name: Checkout code
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Set up JDK 17
+      # Step 2: Set up JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # Cache Gradle dependencies
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-
-      # Grant execute permission for gradlew
+      # Step 3: Make the gradlew file executable
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # Run Gradle tests
-      - name: Run tests
+      # Step 4: Wait for MySQL service to be ready
+      - name: Wait for MySQL service to be ready
+        run: sleep 5
+
+      # Step 5: Run Liquibase migrations (if required)
+      - name: Run Liquibase Migrations
+        run: ./gradlew update
+
+      # Step 6: Build the project
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      # Step 7: Run Tests
+      - name: Run Tests
         run: ./gradlew test
 
-      # Save test reports
-      - name: Archive Test Results
+      # Step 8: Upload Test Results
+      - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v3
         with:
