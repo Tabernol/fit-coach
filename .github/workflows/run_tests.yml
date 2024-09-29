@@ -1,18 +1,20 @@
-name: Test and Validate Pull Requests
+name: Gradle Build and Test
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
-      - dev
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       # Checkout the repository
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
       # Set up JDK 17
@@ -22,27 +24,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # Cache Gradle dependencies
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-
-      # Grant execute permission for gradlew
+      # Ensure gradlew has execute permissions
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # Run Gradle tests
-      - name: Run tests
-        run: ./gradlew test
+      # Build the project using Gradle
+      - name: Build with Gradle
+        run: ./gradlew build
 
-      # Save test reports
-      - name: Archive Test Results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: build/reports/tests/test
+      # Run Gradle tests
+      - name: Run Tests
+        run: ./gradlew test
