@@ -9,4 +9,9 @@ class UserServiceImplTest {
     @Test
     void get() {
     }
+
+    @Test
+    void get2() {
+        throw new RuntimeException();
+    }
 }
