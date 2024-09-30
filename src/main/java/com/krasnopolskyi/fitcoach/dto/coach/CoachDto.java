@@ -1,6 +1,6 @@
 package com.krasnopolskyi.fitcoach.dto.coach;
 
-import com.krasnopolskyi.fitcoach.dto.trainee.TraineeDto;
+import com.krasnopolskyi.fitcoach.dto.trainee.TraineeInfo;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,5 +14,5 @@ public class CoachDto {
     private String username;
     private boolean isActive;
     private String specialization;
-    List<TraineeDto> trainees;
+    List<TraineeInfo> trainees;
 }

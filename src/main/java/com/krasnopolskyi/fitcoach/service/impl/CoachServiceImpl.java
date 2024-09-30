@@ -3,6 +3,7 @@ package com.krasnopolskyi.fitcoach.service.impl;
 import com.krasnopolskyi.fitcoach.dto.RegistrationResponse;
 import com.krasnopolskyi.fitcoach.dto.coach.CoachCreateRequest;
 import com.krasnopolskyi.fitcoach.dto.coach.CoachDto;
+import com.krasnopolskyi.fitcoach.dto.trainee.TraineeInfo;
 import com.krasnopolskyi.fitcoach.exception.UserNotFoundException;
 import com.krasnopolskyi.fitcoach.entity.Coach;
 import com.krasnopolskyi.fitcoach.entity.TrainingType;
@@ -13,6 +14,8 @@ import com.krasnopolskyi.fitcoach.service.TrainingTypeService;
 import com.krasnopolskyi.fitcoach.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class CoachServiceImpl implements CoachService {
@@ -37,7 +40,8 @@ public class CoachServiceImpl implements CoachService {
     @Override
     public CoachDto get(String username) throws UserNotFoundException {
         Coach coach = findByUsername(username);
-        return mapToDto(coach);
+        List<TraineeInfo> trainees = repository.findAllTraineesByCoachUsername(username);
+        return mapToDto(coach, trainees);
     }
 
     @Override
@@ -62,7 +66,8 @@ public class CoachServiceImpl implements CoachService {
         user.setLastName(coachDto.getLastName());
         user.setActive(coachDto.isActive());
         coach.setUser(user);
-        return null;
+        List<TraineeInfo> trainees = repository.findAllTraineesByCoachUsername(coachDto.getUsername());
+        return mapToDto(coach, trainees);
     }
 
     @Override
@@ -71,14 +76,14 @@ public class CoachServiceImpl implements CoachService {
         return userService.delete(username);
     }
 
-    private CoachDto mapToDto(Coach coach){
+    private CoachDto mapToDto(Coach coach, List<TraineeInfo> trainees){
         return CoachDto.builder()
                 .firstName(coach.getUser().getFirstName())
                 .lastName(coach.getUser().getLastName())
                 .username(coach.getUser().getUsername())
                 .isActive(coach.getUser().isActive())
                 .specialization(coach.getSpecialization().getTrainingTypeName())
-                // todo add trainees
+                .trainees(trainees)
                 .build();
     }
 }
