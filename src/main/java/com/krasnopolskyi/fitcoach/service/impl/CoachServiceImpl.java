@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CoachServiceImpl implements CoachService {
@@ -74,6 +75,17 @@ public class CoachServiceImpl implements CoachService {
     @Transactional
     public boolean delete(String username) {
         return userService.delete(username);
+    }
+
+    @Override
+    public List<CoachDto> getAll() {
+        List<Coach> coaches = repository.findAll();
+        List<CoachDto> coachDtoList = coaches.stream()
+                .map(coach -> {
+                    List<TraineeInfo> trainees = repository.findAllTraineesByCoachUsername(coach.getUser().getUsername());
+                    return mapToDto(coach, trainees);
+                }).collect(Collectors.toList());
+        return coachDtoList;
     }
 
     private CoachDto mapToDto(Coach coach, List<TraineeInfo> trainees){

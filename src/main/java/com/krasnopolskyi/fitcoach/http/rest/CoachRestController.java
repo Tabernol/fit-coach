@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/coaches")
 public class CoachRestController {
@@ -17,6 +19,11 @@ public class CoachRestController {
 
     public CoachRestController(CoachService coachService) {
         this.coachService = coachService;
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<CoachDto>> getAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(coachService.getAll());
     }
 
     @GetMapping("/{username}")
