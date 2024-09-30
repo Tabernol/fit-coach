@@ -11,7 +11,7 @@ INSERT INTO training_type (training_type_name) VALUES
     ('Functional Fitness'),
     ('HIIT'),
     ('Pilates'),
-    ('Powerliftin'),
+    ('Powerlifting'),
     ('Rehabilitation'),
     ('Resistance'),
     ('Stretching'),

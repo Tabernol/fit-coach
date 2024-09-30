@@ -11,3 +11,7 @@ databaseChangeLog:
       - file: db/changelog/tables/training.sql
   - include:
       - file: db/changelog/data/training_type_default_data.sql
+  - include:
+      - file: db/changelog/data/trainer_default_data.sql
+  - include:
+      - file: db/changelog/data/trainee_default_data.sql
