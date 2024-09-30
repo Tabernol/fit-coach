@@ -28,18 +28,4 @@ public class Training {
     private String trainingName;
     private LocalDate trainingDate;
     private Integer trainingDuration;
-
-
-    @Override
-    public String toString() {
-        return "Training{" +
-                "id=" + id +
-                ", trainee=" + trainee +
-                ", coach=" + coach +
-                ", trainingType=" + trainingType +
-                ", trainingName='" + trainingName + '\'' +
-                ", trainingDate=" + trainingDate +
-                ", trainingDuration=" + trainingDuration +
-                '}';
-    }
 }

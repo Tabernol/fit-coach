@@ -1,6 +1,6 @@
 package com.krasnopolskyi.fitcoach.dto.trainee;
 
-import com.krasnopolskyi.fitcoach.dto.coach.CoachDto;
+import com.krasnopolskyi.fitcoach.dto.coach.CoachInfo;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,5 +16,5 @@ public class TraineeDto {
     private LocalDate dateOfBirth;
     private String address;
     private boolean isActive;
-    private List<CoachDto> coaches;
+    private List<CoachInfo> coaches;
 }
