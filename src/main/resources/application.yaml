@@ -2,12 +2,17 @@ spring.application.name: fit-coach
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/fit_coach?createDatabaseIfNotExist=true
-    username: root
-    password: root
-  liquibase:
-    enabled: true
-
+    url: jdbc:h2:mem:krasnopolskyi-gym
+    username: maks
+    password:
   jpa:
-    properties.hibernate:
-      format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  sql:
+    init:
+      platform: h2

@@ -16,16 +16,22 @@ public class Training {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "trainee_id", referencedColumnName = "id")
-    private Trainee trainee;
-    @ManyToOne
-    @JoinColumn(name = "trainer_id", referencedColumnName = "id")
-    private Coach coach;
-    @ManyToOne
-    @JoinColumn(name = "training_type_id", referencedColumnName = "id")
-    private TrainingType trainingType;
+
     private String trainingName;
-    private LocalDate trainingDate;
-    private Integer trainingDuration;
+
+    @Column(name = "training_date")
+    private LocalDate date;
+
+    @Column(name = "training_duration")
+    private Integer duration;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Trainee trainee;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Trainer trainer;
+
+    @OneToOne
+    @JoinColumn(name = "training_type_id")
+    private TrainingType trainingType;
 }
