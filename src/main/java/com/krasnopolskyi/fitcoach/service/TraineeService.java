@@ -1,15 +1,15 @@
 package com.krasnopolskyi.fitcoach.service;
 
 
-import com.krasnopolskyi.fitcoach.dto.request.TraineeDto;
-import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
-import com.krasnopolskyi.fitcoach.dto.request.UserDto;
+import com.krasnopolskyi.fitcoach.dto.request.*;
 import com.krasnopolskyi.fitcoach.dto.response.TraineeProfileDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileShortDto;
+import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.entity.Trainee;
 import com.krasnopolskyi.fitcoach.entity.Trainer;
 import com.krasnopolskyi.fitcoach.entity.User;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
+import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.TraineeRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
 import com.krasnopolskyi.fitcoach.utils.mapper.TraineeMapper;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +29,7 @@ public class TraineeService {
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
     private final UserService userService;
+    private final TrainingService trainingService;
 
     @Transactional
     public UserCredentials save(TraineeDto traineeDto) {
@@ -44,37 +44,31 @@ public class TraineeService {
         return new UserCredentials(savedTrainee.getUser().getUsername(), savedTrainee.getUser().getPassword());
     }
 
-//    @Transactional(readOnly = true)
-//    public TraineeResponseDto findById(Long id) throws EntityException {
-//        return TraineeMapper.mapToDto(findTraineeById(id));
-//
-//    }
-//
     @Transactional(readOnly = true) //generate test
     public TraineeProfileDto findByUsername(String username) throws EntityException {
-        return traineeRepository.findByUsername(username)
-                .map(trainee -> TraineeMapper.mapToDto(trainee))
-                .orElseThrow(() -> new EntityException("Can't find trainee with username " + username));
+        return TraineeMapper.mapToDto(getByUsername(username));
     }
-//
-//    @Transactional
-//    public TraineeResponseDto update(TraineeDto traineeDto) throws EntityException {
-//        // find trainee entity
-//        Trainee trainee = findTraineeById(traineeDto.getId());
-//        //update trainee's fields
-//        trainee.setAddress(traineeDto.getAddress());
-//        trainee.setDateOfBirth(traineeDto.getDateOfBirth());
-//
-//        //update user's fields
-//        User user = userService.findById(trainee.getUser().getId()); // find user associated with trainee
-//        user.setFirstName(traineeDto.getFirstName());
-//        user.setLastName(traineeDto.getLastName());
-//
-//        Trainee savedTrainee = traineeRepository.save(trainee);
-//        log.debug("trainee has been updated " + trainee.getId());
-//        return TraineeMapper.mapToDto(savedTrainee);
-//    }
-//
+
+    @Transactional
+    public TraineeProfileDto update(TraineeUpdateDto traineeDto) throws EntityException {
+        //here or above need check if current user have permissions to change trainee
+        // find trainee entity
+        Trainee trainee = getByUsername(traineeDto.username());
+        //update trainee's fields
+        trainee.setAddress(traineeDto.address());
+        trainee.setDateOfBirth(traineeDto.dateOfBirth());
+
+        //update user's fields
+        User user = trainee.getUser();
+        user.setFirstName(traineeDto.firstName());
+        user.setLastName(traineeDto.lastName());
+        user.setIsActive(traineeDto.isActive());
+
+        Trainee savedTrainee = traineeRepository.save(trainee);
+        log.debug("trainee has been updated " + trainee.getId());
+        return TraineeMapper.mapToDto(savedTrainee);
+    }
+
     @Transactional
     public boolean delete(String username) throws EntityException {
         return traineeRepository.findByUsername(username)
@@ -88,8 +82,7 @@ public class TraineeService {
 
     @Transactional
     public List<TrainerProfileShortDto> updateTrainers(String username, List<String> trainerUsernames) throws EntityException {
-        Trainee trainee = traineeRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityException("Can't find trainee with username " + username));
+        Trainee trainee = getByUsername(username);
 
         trainee.getTrainers().clear();
         for (String trainerUsername : trainerUsernames) {
@@ -108,18 +101,33 @@ public class TraineeService {
 
     @Transactional(readOnly = true)
     public List<TrainerProfileShortDto> findAllNotAssignedTrainersByTrainee(String username) throws EntityException {
-        Trainee trainee = traineeRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityException("Can't find trainee with username " + username));
+        Trainee trainee = getByUsername(username);
 
         List<Trainer> allTrainers = trainerRepository.findAllActiveTrainers();
         allTrainers.removeAll(trainee.getTrainers());
         return allTrainers.stream().map(TrainerMapper::mapToShortDto).toList();
     }
-//
-//
-//    private Trainee findTraineeById(Long id) throws EntityException {
-//        return traineeRepository.findById(id)
-//                .orElseThrow(() -> new EntityException("Could not found trainee with id " + id)); // find trainee entity
-//    }
+
+    public List<TrainingResponseDto> getTrainings(TrainingFilterDto filter) throws EntityException {
+        getByUsername(filter.getOwner()); // validate if exist trainee with such username
+        return trainingService.getFilteredTrainings(filter);
+    }
+
+    @Transactional
+    public String changeStatus(String username, ToggleStatusDto statusDto) throws EntityException, ValidateException {
+        //here or above need check if current user have permissions to change trainee
+        if(!username.equals(statusDto.username())){
+            throw new ValidateException("Username should be the same");
+        }
+        Trainee trainee = getByUsername(statusDto.username()); // validate is trainee exist with this name
+        User user = userService.changeActivityStatus(statusDto);
+        String result = "Status of trainee " + user.getUsername() + " is " + (user.getIsActive() ? "activated": "deactivated");
+        return result;
+    }
+
+    private Trainee getByUsername(String username) throws EntityException {
+        return traineeRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityException("Can't find trainee with username " + username));
+    }
 
 }

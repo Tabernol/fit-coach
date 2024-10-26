@@ -2,6 +2,7 @@ package com.krasnopolskyi.fitcoach.http.handler;
 
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -31,7 +33,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @param ex      The exception containing validation errors.
      * @param headers The headers for the response.
      * @param status  The HTTP status code for the response.
-     * @param request The current web request.
+     * @param webRequest The current web request.
      * @return ResponseEntity with a detailed error response for validation errors.
      */
     @Override
@@ -40,12 +42,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             MethodArgumentNotValidException ex,
             HttpHeaders headers,
             HttpStatusCode status,
-            WebRequest request) {
+            WebRequest webRequest) {
         ErrorResponse errorResponse =
                 new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), VALIDATION_ERROR_MESSAGE);
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             errorResponse.addErrorContent(fieldError.getField(), fieldError.getDefaultMessage());
         }
+
+
+        // Cast WebRequest to ServletWebRequest to access HttpServletRequest and then has access to this attribute in interceptor
+        if (webRequest instanceof ServletWebRequest) {
+            HttpServletRequest request = ((ServletWebRequest) webRequest).getRequest();
+            // Set the error message in HttpServletRequest so that the interceptor can log it
+            request.setAttribute("errorMessage", errorResponse.getMessage() + errorResponse.getErrors());
+        }
+
         log.warn("Validation error occurred: ", ex);
         log.info("Response sent: " + errorResponse.getMessage() + errorResponse.getErrors());
         return ResponseEntity.badRequest().body(errorResponse);

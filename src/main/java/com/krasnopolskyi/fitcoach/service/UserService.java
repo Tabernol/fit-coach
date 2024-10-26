@@ -1,6 +1,7 @@
 package com.krasnopolskyi.fitcoach.service;
 
 import com.krasnopolskyi.fitcoach.dto.request.ChangePasswordDto;
+import com.krasnopolskyi.fitcoach.dto.request.ToggleStatusDto;
 import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.dto.request.UserDto;
 import com.krasnopolskyi.fitcoach.entity.User;
@@ -60,14 +61,12 @@ public class UserService {
         user.setPassword(changePasswordDto.newPassword());
         return userRepository.save(user);
     }
-//
-//
-//    @Transactional
-//    public User changeActivityStatus(String target) throws GymException {
-//        User user = findByUsername(target);
-//        user.setIsActive(!user.getIsActive()); //status changes here
-//        return userRepository.update(user);
-//    }
+
+    public User changeActivityStatus(ToggleStatusDto statusDto) throws EntityException {
+        User user = findByUsername(statusDto.username());
+        user.setIsActive(statusDto.isActive()); //status changes here
+        return userRepository.save(user);
+    }
 
     private String generateUsername(String firstName, String lastName) {
         int count = 1;

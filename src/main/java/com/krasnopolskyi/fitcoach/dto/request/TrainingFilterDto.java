@@ -7,8 +7,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Builder
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingFilterDto {

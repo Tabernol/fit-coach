@@ -16,3 +16,11 @@ spring:
   sql:
     init:
       platform: h2
+
+
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    config: /logback-spring.xml

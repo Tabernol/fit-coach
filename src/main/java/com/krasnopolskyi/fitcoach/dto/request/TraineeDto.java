@@ -1,6 +1,7 @@
 package com.krasnopolskyi.fitcoach.dto.request;
 
 import com.krasnopolskyi.fitcoach.validation.Create;
+import com.krasnopolskyi.fitcoach.validation.annotation.CustomValidAge;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public class TraineeDto {
     @Size(groups = Create.class, min = 2, max = 32, message = "Last name must be between 2 and 32 characters")
     private String lastName;
 
-    //    @CustomValidAge(groups = Create.class, message = "Date of birth must be valid")
+    @CustomValidAge(groups = Create.class, message = "Date of birth must be valid")
     private LocalDate dateOfBirth;
 
     @Size(groups = Create.class, min = 2, max = 256, message = "Address must be between less than 256 characters")
