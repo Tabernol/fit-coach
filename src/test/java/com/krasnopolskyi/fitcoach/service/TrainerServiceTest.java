@@ -199,4 +199,12 @@ class TrainerServiceTest {
         assertThrows(EntityException.class, () -> trainerService.findByUsername(username));
         verify(trainerRepository).findByUsername(username);
     }
+
+    @Test
+    void testChangeStatusThrowException() throws EntityException, ValidateException {
+        ToggleStatusDto statusDto = new ToggleStatusDto("another.doe", true);
+
+        assertThrows(ValidateException.class, () ->
+                trainerService.changeStatus("john.doe", statusDto));
+    }
 }

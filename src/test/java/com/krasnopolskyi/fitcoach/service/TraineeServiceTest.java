@@ -2,8 +2,8 @@ package com.krasnopolskyi.fitcoach.service;
 
 import com.krasnopolskyi.fitcoach.dto.request.*;
 import com.krasnopolskyi.fitcoach.dto.response.TraineeProfileDto;
-import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileShortDto;
+import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.entity.Trainee;
 import com.krasnopolskyi.fitcoach.entity.Trainer;
 import com.krasnopolskyi.fitcoach.entity.TrainingType;
@@ -186,6 +186,32 @@ class TraineeServiceTest {
         String result = traineeService.changeStatus("john.doe", statusDto);
 
         assertEquals("Status of trainee john.doe is activated", result);
+    }
+
+    @Test
+    void testChangeStatusThrowException() throws EntityException, ValidateException {
+        ToggleStatusDto statusDto = new ToggleStatusDto("another.doe", true);
+
+        assertThrows(ValidateException.class, () ->
+                traineeService.changeStatus("john.doe", statusDto));
+    }
+
+    @Test
+    public void testGetTrainings_Success() throws EntityException {
+        // Arrange
+        TrainingFilterDto filter = new TrainingFilterDto("john.doe", null, null, null, null);
+        when(traineeRepository.findByUsername("john.doe")).thenReturn(Optional.ofNullable(mockTrainee));
+        List<TrainingResponseDto> trainings = List.of(new TrainingResponseDto(1L, "Training 1", "Strength", "Trainer Doe", "John Doe", LocalDate.now(), 60));
+        when(trainingService.getFilteredTrainings(filter)).thenReturn(trainings);
+
+        // Act
+        List<TrainingResponseDto> result = traineeService.getTrainings(filter);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        verify(traineeRepository).findByUsername("john.doe");
+        verify(trainingService).getFilteredTrainings(filter);
     }
 
 }

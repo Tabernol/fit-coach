@@ -82,6 +82,21 @@ class UserServiceTest {
     }
 
     @Test
+    void testCreateUserIfUsernameExist() {
+        when(userRepository.findByUsername("john.doe")).thenReturn(Optional.ofNullable(mockUser));
+        when(userRepository.findByUsername("john.doe1")).thenReturn(Optional.empty());
+
+        User result = userService.create(mockUserDto);
+
+        assertNotNull(result);
+        assertEquals(mockUserDto.firstName(), result.getFirstName());
+        assertEquals(mockUserDto.lastName(), result.getLastName());
+        assertTrue(result.getIsActive());
+        assertNotNull(result.getUsername());
+        assertNotNull(result.getPassword());
+    }
+
+    @Test
     void testCheckCredentialsSuccess() throws EntityException {
         when(userRepository.findByUsername("john.doe"))
                 .thenReturn(Optional.of(mockUser));

@@ -96,13 +96,4 @@ public class TrainerService {
         return trainerRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityException("Can't find trainer with username " + username));
     }
-
-    private void validate(TrainerDto trainerDto) throws ValidateException {
-        try {
-            trainingTypeService.findById(trainerDto.getSpecialization());
-        } catch (EntityException e) {
-            log.warn("Attempt to save trainer with does not exist specialization " + trainerDto.getSpecialization());
-            throw new ValidateException("Specialisation with id " + trainerDto.getSpecialization() + " does not exist");
-        }
-    }
 }
