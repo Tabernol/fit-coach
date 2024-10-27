@@ -65,7 +65,7 @@ public class UserService {
 
     /**
      * Method generate unique username based on provided first name and last name.
-     * If current username is already exist in database add digit to end of username and check again.
+     * If current username already exists in database method adds digit to end of username and check again.
      * example 'john.doe1' if 'john.doe' is already exist
      * @param firstName - first name of user
      * @param lastName - last name of user

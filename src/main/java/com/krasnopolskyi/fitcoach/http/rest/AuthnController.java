@@ -2,8 +2,10 @@ package com.krasnopolskyi.fitcoach.http.rest;
 
 import com.krasnopolskyi.fitcoach.dto.request.ChangePasswordDto;
 import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
+import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
+import com.krasnopolskyi.fitcoach.service.AuthenticationService;
 import com.krasnopolskyi.fitcoach.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,15 +17,15 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/authn")
 public class AuthnController {
-
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserCredentials credentials) throws EntityException {
-        userService.checkCredentials(credentials);
-        return userService.checkCredentials(credentials) ?
-                ResponseEntity.status(HttpStatus.OK).body("Success")
-                : ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bad credentials");
+    public ResponseEntity<String> login(@RequestBody UserCredentials credentials) throws EntityException, AuthnException {
+        return ResponseEntity.ok(authenticationService.logIn(credentials));
+//        return userService.checkCredentials(credentials) ?
+//                ResponseEntity.status(HttpStatus.OK).body("Success")
+//                : ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bad credentials");
     }
 
     @PutMapping("/change-pass")

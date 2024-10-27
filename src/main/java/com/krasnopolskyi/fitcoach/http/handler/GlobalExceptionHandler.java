@@ -99,7 +99,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(AuthnException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Object> handleAuthnException(
             AuthnException exception, WebRequest request) {
         log.warn("Failed to find the requested entity check passed id", exception);

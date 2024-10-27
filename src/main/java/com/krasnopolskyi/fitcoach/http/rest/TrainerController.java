@@ -53,7 +53,7 @@ public class TrainerController {
         return ResponseEntity.status(HttpStatus.OK).body(trainings);
     }
 
-    @PostMapping()
+    @PostMapping("/public")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserCredentials> createTrainer(
             @Validated(Create.class) @RequestBody TrainerDto trainerDto) throws EntityException {

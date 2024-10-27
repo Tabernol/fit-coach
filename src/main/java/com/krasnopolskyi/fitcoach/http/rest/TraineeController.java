@@ -23,7 +23,7 @@ import java.util.List;
 public class TraineeController {
     private final TraineeService traineeService;
 
-    @PostMapping()
+    @PostMapping("/public")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserCredentials> createTrainee(
             @Validated(Create.class) @RequestBody TraineeDto traineeDto) {
