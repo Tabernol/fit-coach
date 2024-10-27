@@ -11,10 +11,21 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * main purpose of this class do logging before each request and after.
+ * Log stores log/{date}/rest.log
+ */
 @Component
 @Slf4j(topic = "REST")
 public class ControllerLogInterceptor implements HandlerInterceptor {
 
+    /**
+     * method does log before executing API end-point with unique id also specify end-point and params
+     * @param request current HTTP request
+     * @param response current HTTP response
+     * @param handler chosen handler to execute, for type and/or instance evaluation
+     * @return
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String requestId = UUID.randomUUID().toString();
@@ -24,6 +35,16 @@ public class ControllerLogInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    /**
+     * method does logging after executing end-point saves id, status,
+     * response and message if there is exception
+     * @param request current HTTP request
+     * @param response current HTTP response
+     * @param handler the handler (or {@link HandlerMethod}) that started asynchronous
+     * execution, for type and/or instance examination
+     * @param ex any exception thrown on handler execution, if any; this does not
+     * include exceptions that have been handled through an exception resolver
+     */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         String requestId = (String) request.getAttribute("requestId");

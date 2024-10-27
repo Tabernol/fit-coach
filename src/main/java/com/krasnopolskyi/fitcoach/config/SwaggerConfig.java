@@ -24,12 +24,8 @@ public class SwaggerConfig {
                 .version("v0.0.1")
                 .license(new License().name("Created by Maksym Krasnopolskyi").url("https://www.linkedin.com/in/maksym-krasnopolskyi-10a245245/"));
 
-
         return new OpenAPI()
                 .info(gym_api)
-//                .externalDocs(new ExternalDocumentation()
-//                        .description("SpringBoot Wiki Documentation")
-//                        .url("https://springboot.wiki.github.org/docs"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(
                         new Components()
@@ -37,8 +33,8 @@ public class SwaggerConfig {
                                         new SecurityScheme()
                                                 .name(securitySchemeName)
                                                 .type(SecurityScheme.Type.HTTP)
-                                                .scheme("bearer")
-                                                .bearerFormat("JWT")
+                                                .scheme("bearer")  // Use Bearer scheme
+                                                .bearerFormat("JWT")  // Indicate JWT format
                                 )
                 );
     }

@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final AuthnInterceptor authnInterceptor;
 
-    // add custom interceptor for spring configuration
+    // add custom interceptors for spring configuration
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // Register the logging interceptor for all paths
@@ -22,17 +22,17 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**"); // Apply to all endpoints
 
 
-//        // Register the authentication interceptor for secured paths
-//        registry.addInterceptor(authnInterceptor)
-//                .addPathPatterns("/**")
-//                .excludePathPatterns(
-//                        "/swagger-ui/**",        // Exclude Swagger UI path
-//                        "/v3/api-docs/**",       // Exclude OpenAPI specification
-//                        "/swagger-resources/**", // Exclude Swagger resources
-//                        "/webjars/**",           // Exclude webjars for Swagger UI dependencies
-//                        "/api/v1/authn/login",   // Exclude login endpoint
-//                        "/api/v1/trainees/public",
-//                        "/api/v1/trainers/public"
-//                );  // Exclude these paths from security
+        // Register the authentication interceptor for secured paths
+        registry.addInterceptor(authnInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(            // Exclude these paths from security
+                        "/swagger-ui/**",        // Exclude Swagger UI path
+                        "/v3/api-docs/**",       // Exclude OpenAPI specification
+                        "/swagger-resources/**", // Exclude Swagger resources
+                        "/webjars/**",           // Exclude webjars for Swagger UI dependencies
+                        "/api/v1/authn/login",   // Exclude login endpoint
+                        "/api/v1/trainees/public",
+                        "/api/v1/trainers/public"
+                );
     }
 }

@@ -4,34 +4,36 @@ import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
-
-    private static final Map<String, String> userTokenMap = new HashMap<>();
-
     private final UserService userService;
+    private final JwtService jwtService;
 
 
     public String logIn(UserCredentials userCredentials) throws EntityException, AuthnException {
-        if(userService.checkCredentials(userCredentials)){
-            String token = UUID.randomUUID().toString();
-            userTokenMap.put(token, userCredentials.username()); // maybe need to do in another order k/v
+        if (userService.checkCredentials(userCredentials)) {
+            String token = jwtService.generateToken(userCredentials.username());
+            log.debug("Generated JWT Token for user: {}", userCredentials.username());
             return token;
-
         } else {
             throw new AuthnException("Invalid credentials");
         }
     }
 
     public boolean isTokenValid(String token) {
-        return userTokenMap.containsKey(token);
+        try {
+            // Extract the username from the token
+            String username = jwtService.extractUserName(token);
+            // Validate token by comparing with the actual user credentials
+            return jwtService.isTokenValid(token, username);
+        } catch (Exception e) {
+            log.error("Token validation failed: {}", e.getMessage());
+            return false;
+        }
     }
 }
