@@ -21,9 +21,6 @@ public class TrainingDto {
     @Size(groups = Create.class, min = 2, max = 64, message = "Training name must be between 2 and 64 characters")
     private String trainingName;
 
-//    @NotNull(groups = Create.class, message = "Training type cannot be null")
-//    private Integer trainingType;
-
     @PastOrPresent(groups = Create.class, message = "The training date cannot be in the future")
     private LocalDate date;
 

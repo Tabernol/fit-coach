@@ -27,7 +27,6 @@ public class TrainerService {
     private final TrainerRepository trainerRepository;
     private final UserService userService;
     private final TrainingTypeService trainingTypeService;
-
     private final TrainingService trainingService;
 
     @Transactional

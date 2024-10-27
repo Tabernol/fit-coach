@@ -34,11 +34,6 @@ public class UserService {
         return user;
     }
 
-//    public User findById(Long id) throws EntityException {
-//        return userRepository.findById(id)
-//                .orElseThrow(() -> new EntityException("Could not found user with id " + id));
-//    }
-//
     private User findByUsername(String username) throws EntityException {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityException("Could not found user: " + username));
@@ -68,6 +63,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    /**
+     * Method generate unique username based on provided first name and last name.
+     * If current username is already exist in database add digit to end of username and check again.
+     * example 'john.doe1' if 'john.doe' is already exist
+     * @param firstName - first name of user
+     * @param lastName - last name of user
+     * @return unique username for current database
+     */
     private String generateUsername(String firstName, String lastName) {
         int count = 1;
         String template = firstName.toLowerCase() + "." + lastName.toLowerCase();
@@ -79,6 +82,11 @@ public class UserService {
         return username;
     }
 
+    /**
+     * checks if username exist in database
+     * @param username target username
+     * @return true is username exist, otherwise false
+     */
     private boolean isUsernameExist(String username){
         return userRepository.findByUsername(username).isPresent();
     }
