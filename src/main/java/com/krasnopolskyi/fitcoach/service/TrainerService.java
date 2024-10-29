@@ -32,7 +32,6 @@ public class TrainerService {
 
     @Transactional
     public UserCredentials save(TrainerDto trainerDto) throws EntityException {
-//        validate(trainerDto); // validate specialization
         TrainingType specialization = trainingTypeService.findById(trainerDto.getSpecialization()); // receive specialization
 
         User newUser = userService

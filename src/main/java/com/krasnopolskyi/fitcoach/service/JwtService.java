@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Class provides functionality for generate and validate token
+ * Class provides functionality for generate and validate JWT token
+ *
  */
 @Service
 public class JwtService {

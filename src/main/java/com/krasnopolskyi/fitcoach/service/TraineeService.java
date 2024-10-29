@@ -52,7 +52,6 @@ public class TraineeService {
 
     @Transactional
     public TraineeProfileDto update(TraineeUpdateDto traineeDto) throws EntityException {
-        //here or above need check if current user have permissions to change trainee
         // find trainee entity
         Trainee trainee = getByUsername(traineeDto.username());
         //update trainee's fields

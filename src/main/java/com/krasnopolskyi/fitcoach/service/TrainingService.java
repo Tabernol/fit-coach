@@ -36,8 +36,8 @@ public class TrainingService {
         Trainer trainer = trainerRepository.findByUsername(trainingDto.getTrainerUsername())
                 .orElseThrow(() -> new EntityException("Could not find trainer with id " + trainingDto.getTrainerUsername()));
 
-        isUserActive(trainee.getUser());
-        isUserActive(trainer.getUser());
+        isUserActive(trainee.getUser()); // validate if user active
+        isUserActive(trainer.getUser()); // validate if user active
 
         trainer.getTrainees().add(trainee); // save into set and table trainer_trainee
 
@@ -64,14 +64,6 @@ public class TrainingService {
         }
     }
 
-    //
-//    @Transactional(readOnly = true)
-//    public TrainingResponseDto findById(Long id) throws EntityException {
-//        Training training = trainingRepository.findById(id)
-//                .orElseThrow(() -> new EntityException("Could not found training with id " + id));
-//        return TrainingMapper.mapToDto(training);
-//    }
-//
     @Transactional(readOnly = true)
     public List<TrainingResponseDto> getFilteredTrainings(TrainingFilterDto filter) throws EntityException {
         userRepository.findByUsername(filter.getOwner())
