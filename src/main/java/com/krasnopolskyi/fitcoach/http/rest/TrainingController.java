@@ -20,6 +20,13 @@ public class TrainingController {
     private final TrainingService trainingService;
 
 
+    /**
+     * Provides functionality for creating training session
+     * @param trainingDto dto with fields
+     * @return dto of training session
+     * @throws EntityException will be throw if trainer or trainee does not exist
+     * @throws ValidateException will be throw if trainee or/and trainer profile deactivated
+     */
     @PostMapping
     public ResponseEntity<TrainingResponseDto> addTraining(
             @Validated(Create.class)

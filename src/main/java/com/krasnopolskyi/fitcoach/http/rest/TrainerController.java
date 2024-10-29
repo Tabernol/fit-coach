@@ -24,11 +24,26 @@ public class TrainerController {
 
     private final TrainerService trainerService;
 
+    /**
+     * Provides end-point for retrieve data about trainer
+     * @param username is unique name of trainer
+     * @return to with data about trainer
+     * @throws EntityException will be throw if trainer does not exist with such username
+     */
     @GetMapping("/{username}")
     public ResponseEntity<TrainerProfileDto> getTrainer(@PathVariable("username") String username) throws EntityException {
         return ResponseEntity.status(HttpStatus.OK).body(trainerService.findByUsername(username));
     }
 
+    /**
+     * provides filtering functionality for training sessions of trainer
+     * @param username target trainer for searching
+     * @param periodFrom date from
+     * @param periodTo date to
+     * @param partner trainee
+     * @return List of trainings otherwise empty list
+     * @throws EntityException will be thrown if target username does not exist as trainer
+     */
     @GetMapping("/{username}/trainings")
     public ResponseEntity<List<TrainingResponseDto>> findTraining(
             @PathVariable String username,
@@ -47,6 +62,12 @@ public class TrainerController {
         return ResponseEntity.status(HttpStatus.OK).body(trainings);
     }
 
+    /**
+     * Provides public end-point for creating trainer
+     * @param trainerDto dto with user fields
+     * @return credentials for authentication generated username and password
+     * @throws EntityException if training type does not exist
+     */
     @PostMapping("/public")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserCredentials> createTrainer(
@@ -54,6 +75,12 @@ public class TrainerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(trainerService.save(trainerDto));
     }
 
+    /**
+     * Update trainer fields
+     * @param trainerDto Dto
+     * @return Dto with other fields
+     * @throws EntityException will be throw if trainer does not exist with such username
+     */
     @PutMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<TrainerProfileDto> updateTrainer(
@@ -61,6 +88,14 @@ public class TrainerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(trainerService.update(trainerDto));
     }
 
+    /**
+     * Provides functionality for changing trainer status
+     * @param username of target trainer
+     * @param statusDto dto with username and status
+     * @return message of result this action
+     * @throws EntityException if username does not exist
+     * @throws ValidateException if username in pathVariable and in body are different
+     */
     @PatchMapping("/{username}/toggle-status")
     public ResponseEntity<String> toggleStatus(
             @PathVariable("username") String username,

@@ -71,7 +71,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public boolean delete(String username) throws EntityException {
+    public boolean delete(String username) {
         return traineeRepository.findByUsername(username)
                 .map(entity -> {
                     traineeRepository.delete(entity);

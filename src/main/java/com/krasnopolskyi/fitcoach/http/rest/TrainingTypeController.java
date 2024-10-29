@@ -18,6 +18,9 @@ public class TrainingTypeController {
 
     private final TrainingTypeService trainingTypeService;
 
+    /**
+     * @return List with all available training types
+     */
     @GetMapping
     public ResponseEntity<List<TrainingType>> findAll() {
         return ResponseEntity.status(HttpStatus.OK).body(trainingTypeService.findAll());

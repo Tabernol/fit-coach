@@ -46,13 +46,6 @@ public class TrainerService {
         return new UserCredentials(saveTrainer.getUser().getUsername(), saveTrainer.getUser().getPassword());
     }
 
-//    @Transactional(readOnly = true)
-//    public TrainerResponseDto findById(Long id) throws EntityException {
-//        Trainer trainer = trainerRepository.findById(id)
-//                .orElseThrow(() -> new EntityException("Could not found trainer with id " + id));
-//        return TrainerMapper.mapToDto(trainer);
-//    }
-//
     @Transactional(readOnly = true)
     public TrainerProfileDto findByUsername(String username) throws EntityException {
         return trainerRepository.findByUsername(username)
