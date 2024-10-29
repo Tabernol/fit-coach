@@ -46,7 +46,7 @@ public class UserService {
     }
 
     @Transactional
-    public User changePassword(ChangePasswordDto changePasswordDto) throws GymException {
+    public User changePassword(ChangePasswordDto changePasswordDto) throws EntityException, AuthnException {
         User user = findByUsername(changePasswordDto.username());
         if(!changePasswordDto.oldPassword().equals(user.getPassword())){
             throw new AuthnException("Bad Credentials");

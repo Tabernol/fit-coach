@@ -23,6 +23,11 @@ import java.util.List;
 public class TraineeController {
     private final TraineeService traineeService;
 
+    /**
+     * Provides public end-point for creating trainee
+     * @param traineeDto dto with user fields
+     * @return credentials for authentication generated username and password
+     */
     @PostMapping("/public")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserCredentials> createTrainee(
@@ -30,12 +35,24 @@ public class TraineeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(traineeService.save(traineeDto));
     }
 
+    /**
+     * Provides end-point for retrieve data about trainee
+     * @param username is unique name of trainee
+     * @return dto with data about trainee
+     * @throws EntityException will be throw if trainee does not exist with such username,
+     * but trainer profile can exist
+     */
     @GetMapping("/{username}")
     public ResponseEntity<TraineeProfileDto> getTrainee(@PathVariable("username") String username) throws EntityException {
         return ResponseEntity.status(HttpStatus.OK).body(traineeService.findByUsername(username));
     }
 
-
+    /**
+     * Provides end-point for retrieve data about all trainers with whom current trainee did not have training session
+     * @param username is unique name of trainee
+     * @return List of trainers in short format
+     * @throws EntityException will be throw if trainee does not exist with such username, but trainer profile can exist
+     */
     @GetMapping("/{username}/not-assigned-trainers")
     public ResponseEntity<List<TrainerProfileShortDto>> getAllActiveTrainersForTrainee(
             @PathVariable("username") String username) throws EntityException {
