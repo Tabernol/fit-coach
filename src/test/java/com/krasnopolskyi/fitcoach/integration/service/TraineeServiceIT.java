@@ -21,14 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @IT
 public class TraineeServiceIT {
-//    @Autowired
-//    private TraineeService traineeService;
-
-//    @Test
-//    void findByUsername() throws EntityException {
-//        var trainee = traineeService.findByUsername("john.doe");
-//        assertEquals("John", trainee.getFirstName());
-//    }
 
     @Autowired
     private TraineeService traineeService;
