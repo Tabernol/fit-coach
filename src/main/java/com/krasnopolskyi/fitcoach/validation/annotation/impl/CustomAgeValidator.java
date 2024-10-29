@@ -29,7 +29,7 @@ public class CustomAgeValidator implements ConstraintValidator<CustomValidAge, L
 
         // Check if the person is older than 100 years
         int age = Period.between(dateOfBirth, today).getYears();
-        if (age > MAX_AGE) {
+        if (age >= MAX_AGE) {
             // Customize the error message for exceeding the age limit
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("You are so many years old " + age +

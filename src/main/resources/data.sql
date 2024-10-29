@@ -29,8 +29,7 @@ VALUES
     ('Arnold', 'Schwarzenegger', 'arnold.schwarzenegger', 'root', TRUE),
     ('Jillian', 'Michaels', 'jillian.michaels', 'root', TRUE),
     ('Rich', 'Froning', 'rich.froning', 'root', TRUE),
-    ('Kayla', 'Itsines', 'kayla.itsines', 'root', TRUE),
-    ('Shaun', 'T', 'shaun.t', 'root', FALSE);
+    ('Kayla', 'Itsines', 'kayla.itsines', 'root', TRUE);
 
 -- Insert trainers
 INSERT INTO trainer (user_id, specialization_id)
@@ -38,5 +37,4 @@ VALUES
     (6, 1), -- Arnold Schwarzenegger (Bodybuilding)
     (7, 2), -- Jillian Michaels (Weight Loss)
     (8, 3), -- Rich Froning (CrossFit)
-    (9, 4), -- Kayla Itsines (HIIT)
-    (10, 5); -- Shaun T (Dance)
+    (9, 4); -- Kayla Itsines (HIIT)

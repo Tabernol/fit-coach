@@ -40,7 +40,7 @@ public class ControllerLogInterceptor implements HandlerInterceptor {
      * response and message if there is exception
      * @param request current HTTP request
      * @param response current HTTP response
-     * @param handler the handler (or {@link HandlerMethod}) that started asynchronous
+     * @param handler the handler that started asynchronous
      * execution, for type and/or instance examination
      * @param ex any exception thrown on handler execution, if any; this does not
      * include exceptions that have been handled through an exception resolver
@@ -52,9 +52,10 @@ public class ControllerLogInterceptor implements HandlerInterceptor {
 
         // Check for an exception message stored by the exception handler
         String errorMessage = (String) request.getAttribute("errorMessage");
+        String errorContent = (String) request.getAttribute("errorContent");
         if (errorMessage != null) {
-            log.info("Request Completed: RequestId={}, Status={}, Response=Error, Message={}",
-                    requestId, status, errorMessage);
+            log.info("Request Completed: RequestId={}, Status={}, Response=Error, Message={}, ErrorContent={}",
+                    requestId, status, errorMessage, errorContent);
         } else {
             log.info("Request Completed: RequestId={}, Status={}, Response=Success",
                     requestId, status);

@@ -5,6 +5,7 @@ import com.krasnopolskyi.fitcoach.dto.request.TrainingFilterDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.entity.*;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
+import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.TraineeRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainingRepository;
@@ -77,7 +78,7 @@ class TrainingServiceTest {
     }
 
     @Test
-    void save_shouldReturnTrainingResponseDto_whenSuccessful() throws EntityException {
+    void save_shouldReturnTrainingResponseDto_whenSuccessful() throws EntityException, ValidateException {
         // Arrange
 
         TrainingDto trainingDto = new TrainingDto(

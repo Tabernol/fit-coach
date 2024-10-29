@@ -27,6 +27,6 @@ public class TraineeDto {
     @CustomValidAge(groups = Create.class, message = "Date of birth must be valid")
     private LocalDate dateOfBirth;
 
-    @Size(groups = Create.class, min = 2, max = 256, message = "Address must be between less than 256 characters")
+    @Size(groups = Create.class, max = 256, message = "Address must be less than 256 characters")
     private String address;
 }

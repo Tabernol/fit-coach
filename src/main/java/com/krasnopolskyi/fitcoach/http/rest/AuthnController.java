@@ -7,6 +7,7 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.service.AuthenticationService;
 import com.krasnopolskyi.fitcoach.service.UserService;
+import com.krasnopolskyi.fitcoach.validation.Create;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,12 @@ public class AuthnController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserCredentials credentials) throws EntityException, AuthnException {
         return ResponseEntity.ok(authenticationService.logIn(credentials));
-//        return userService.checkCredentials(credentials) ?
-//                ResponseEntity.status(HttpStatus.OK).body("Success")
-//                : ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bad credentials");
     }
 
     @PutMapping("/change-pass")
-    public ResponseEntity<String> changePassword(@Validated @RequestBody ChangePasswordDto changePasswordDto) throws GymException {
+    public ResponseEntity<String> changePassword(
+            @Validated(Create.class) @RequestBody ChangePasswordDto changePasswordDto)
+            throws GymException {
         userService.changePassword(changePasswordDto);
         return ResponseEntity.status(HttpStatus.OK).body("Password has changed");
     }

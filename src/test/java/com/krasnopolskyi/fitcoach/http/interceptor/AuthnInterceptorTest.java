@@ -1,4 +1,5 @@
 package com.krasnopolskyi.fitcoach.http.interceptor;
+import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,8 +10,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.PrintWriter;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class AuthnInterceptorTest {
@@ -39,18 +39,13 @@ class AuthnInterceptorTest {
     }
 
     @Test
-    void preHandle_ShouldReturnFalseAndSetUnauthorizedResponse_WhenTokenIsMissing() throws Exception {
+    void preHandle_ShouldThrowExceptionAndSetUnauthorizedResponse_WhenTokenIsMissing() throws Exception {
         // Arrange
         when(request.getHeader("Authorization")).thenReturn(null);
 
         // Act
-        boolean result = authnInterceptor.preHandle(request, response, null);
+        assertThrows(AuthnException.class,() ->  authnInterceptor.preHandle(request, response, null));
 
-        // Assert
-        assertFalse(result);
-        verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        verify(response).setContentType("application/json");
-        verify(writer).write("{\"error\": \"Unauthorized: Missing token\"}");
     }
 
     @Test
@@ -58,16 +53,9 @@ class AuthnInterceptorTest {
         // Arrange
         String invalidToken = "Bearer invalid_token";
         when(request.getHeader("Authorization")).thenReturn(invalidToken);
-        when(authenticationService.isTokenValid("invalid_token")).thenReturn(false);
 
         // Act
-        boolean result = authnInterceptor.preHandle(request, response, null);
-
-        // Assert
-        assertFalse(result);
-        verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        verify(response).setContentType("application/json");
-        verify(writer).write("{\"error\": \"Unauthorized: Invalid token\"}");
+        assertThrows(AuthnException.class,() ->  authnInterceptor.preHandle(request, response, null));
     }
 
     @Test

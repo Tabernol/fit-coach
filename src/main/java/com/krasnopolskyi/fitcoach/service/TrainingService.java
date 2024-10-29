@@ -7,7 +7,9 @@ import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.entity.Trainee;
 import com.krasnopolskyi.fitcoach.entity.Trainer;
 import com.krasnopolskyi.fitcoach.entity.Training;
+import com.krasnopolskyi.fitcoach.entity.User;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
+import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.*;
 import com.krasnopolskyi.fitcoach.utils.mapper.TrainingMapper;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +29,15 @@ public class TrainingService {
     private final UserRepository userRepository;
 
     @Transactional
-    public TrainingResponseDto save(TrainingDto trainingDto) throws EntityException {
+    public TrainingResponseDto save(TrainingDto trainingDto) throws EntityException, ValidateException {
         Trainee trainee = traineeRepository.findByUsername(trainingDto.getTraineeUsername())
                 .orElseThrow(() -> new EntityException("Could not find trainee with " + trainingDto.getTraineeUsername()));
 
         Trainer trainer = trainerRepository.findByUsername(trainingDto.getTrainerUsername())
                 .orElseThrow(() -> new EntityException("Could not find trainer with id " + trainingDto.getTrainerUsername()));
+
+        isUserActive(trainee.getUser());
+        isUserActive(trainer.getUser());
 
         trainer.getTrainees().add(trainee); // save into set and table trainer_trainee
 
@@ -50,6 +55,13 @@ public class TrainingService {
         trainingRepository.save(training);
 
         return TrainingMapper.mapToDto(training);
+    }
+
+    private void isUserActive(User user) throws ValidateException {
+        if(!user.getIsActive()){
+            throw new ValidateException("Profile " + user.getFirstName() + " " + user.getLastName() +
+                    " is currently disabled");
+        }
     }
 
     //

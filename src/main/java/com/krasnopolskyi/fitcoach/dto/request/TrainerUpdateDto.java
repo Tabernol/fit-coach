@@ -19,6 +19,6 @@ public record TrainerUpdateDto(
         String specialization,
 
         @NotNull(groups = Create.class, message = "Status can't be null")
-        boolean isActive
+        Boolean isActive
 ) {
 }

@@ -3,6 +3,7 @@ package com.krasnopolskyi.fitcoach.service;
 import com.krasnopolskyi.fitcoach.dto.request.*;
 import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
+import com.krasnopolskyi.fitcoach.dto.response.UserDto;
 import com.krasnopolskyi.fitcoach.entity.Trainer;
 import com.krasnopolskyi.fitcoach.entity.TrainingType;
 import com.krasnopolskyi.fitcoach.entity.User;

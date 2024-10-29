@@ -24,6 +24,6 @@ public record TraineeUpdateDto(
         @Size(groups = Create.class, max = 256, message = "Address max size is 256 characters")
         String address,
         @NotNull(groups = Create.class, message = "Status can't be null")
-        boolean isActive
+        Boolean isActive
 ) {
 }

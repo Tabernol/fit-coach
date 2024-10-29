@@ -1,5 +1,6 @@
 package com.krasnopolskyi.fitcoach.http.interceptor;
 
+import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,28 +18,23 @@ public class AuthnInterceptor implements HandlerInterceptor {
     /**
      * This method validate token before start executing methods in RestControllers.
      * private and public paths specified in WebConfig.clas
-     * @param request current HTTP request
+     *
+     * @param request  current HTTP request
      * @param response current HTTP response
-     * @param handler chosen handler to execute, for type and/or instance evaluation
+     * @param handler  chosen handler to execute, for type and/or instance evaluation
      * @return true if token valid otherwise false
-     * @throws Exception
+     * @throws Exception, AuthnException if user does not authenticate
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         String token = request.getHeader("Authorization");
         if (token == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Unauthorized: Missing token\"}");
-            return false;
+            throw new AuthnException("Unauthorized: Missing token"); // I separated the messages only on development stage
         } else {
             token = token.substring(7);
             if (!authenticationService.isTokenValid(token)) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"error\": \"Unauthorized: Invalid token\"}");
-                return false;
+                throw new AuthnException("Unauthorized: Invalid token");
             }
         }
         return true;

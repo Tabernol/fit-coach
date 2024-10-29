@@ -3,6 +3,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.krasnopolskyi.fitcoach.dto.request.TrainingDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
+import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.service.TrainingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,7 @@ class TrainingControllerTest {
     }
 
     @Test
-    void addTraining_ShouldReturnCreatedTraining_ResponseEntityWay() throws EntityException {
+    void addTraining_ShouldReturnCreatedTraining_ResponseEntityWay() throws EntityException, ValidateException {
         // Arrange
         TrainingDto trainingDto = new TrainingDto("trainee1", "trainer1", "Strength Training", LocalDate.now(), 60);
         TrainingResponseDto trainingResponseDto = new TrainingResponseDto(1L, "Strength Training", "Strength", "Trainer FullName", "Trainee FullName", LocalDate.now(), 60);

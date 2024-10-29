@@ -11,7 +11,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
     private final ControllerLogInterceptor controllerLogInterceptor;
-
     private final AuthnInterceptor authnInterceptor;
 
     // add custom interceptors for spring configuration

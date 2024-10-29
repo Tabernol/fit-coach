@@ -77,7 +77,7 @@ public class TraineeController {
     @PatchMapping("/{username}/toggle-status")
     public ResponseEntity<String> toggleStatus(
             @PathVariable("username") String username,
-            @RequestBody ToggleStatusDto statusDto) throws EntityException, ValidateException {
+            @Validated(Create.class) @RequestBody ToggleStatusDto statusDto) throws EntityException, ValidateException {
         return ResponseEntity.status(HttpStatus.OK).body(traineeService.changeStatus(username, statusDto));
     }
 

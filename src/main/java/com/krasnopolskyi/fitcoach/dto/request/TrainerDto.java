@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainerDto {
-    @NotBlank( message = "First name can't be null")
+    @NotBlank(groups = Create.class, message = "First name can't be null")
     @Size(groups = Create.class, min = 2, max = 32, message = "First name must be between 2 and 32 characters")
     private String firstName;
 
@@ -22,6 +22,6 @@ public class TrainerDto {
     @Size(groups = Create.class, min = 2, max = 32, message = "Last name must be between 2 and 32 characters")
     private String lastName;
 
-    @NotNull(message = "Specialization cannot be null")
+    @NotNull(groups = Create.class, message = "Specialization cannot be null")
     private Integer specialization;
 }

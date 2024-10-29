@@ -5,6 +5,7 @@ import com.krasnopolskyi.fitcoach.dto.request.*;
 import com.krasnopolskyi.fitcoach.dto.response.TraineeProfileDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileShortDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
+import com.krasnopolskyi.fitcoach.dto.response.UserDto;
 import com.krasnopolskyi.fitcoach.entity.Trainee;
 import com.krasnopolskyi.fitcoach.entity.Trainer;
 import com.krasnopolskyi.fitcoach.entity.User;
@@ -114,7 +115,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public String changeStatus(String username, ToggleStatusDto statusDto) throws EntityException, ValidateException {
+    public String changeStatus(String username, ToggleStatusDto statusDto) throws ValidateException, EntityException {
         //here or above need check if current user have permissions to change trainee
         if(!username.equals(statusDto.username())){
             throw new ValidateException("Username should be the same");

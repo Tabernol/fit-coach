@@ -1,4 +1,4 @@
-package com.krasnopolskyi.fitcoach.dto.request;
+package com.krasnopolskyi.fitcoach.dto.response;
 
 public record UserDto(String firstName, String lastName) {
 }

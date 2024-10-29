@@ -2,6 +2,7 @@ package com.krasnopolskyi.fitcoach.http.handler;
 
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
+import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -48,17 +49,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             errorResponse.addErrorContent(fieldError.getField(), fieldError.getDefaultMessage());
         }
-
-
-        // Cast WebRequest to ServletWebRequest to access HttpServletRequest and then has access to this attribute in interceptor
-        if (webRequest instanceof ServletWebRequest) {
-            HttpServletRequest request = ((ServletWebRequest) webRequest).getRequest();
-            // Set the error message in HttpServletRequest so that the interceptor can log it
-            request.setAttribute("errorMessage", errorResponse.getMessage() + errorResponse.getErrors());
-        }
+        // set errors message and content to request attribute for further reading in interceptor
+        passMessageToControllerLogInterceptor(webRequest, errorResponse);
 
         log.warn("Validation error occurred: ", ex);
-        log.info("Response sent: " + errorResponse.getMessage() + errorResponse.getErrors());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
@@ -75,6 +69,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 INTERNAL_SERVER_ERROR_MESSAGE);
+        // set errors message and content to request attribute for further reading in interceptor
+        passMessageToControllerLogInterceptor(request, errorResponse);
         log.error("Unknown error occurred", exception);
         return ResponseEntity.internalServerError().body(errorResponse);
     }
@@ -85,13 +81,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * Handles EntityException and builds a response with an appropriate status code and message.
      *
      * @param exception The EntityException.
-     * @param request               The current web request.
+     * @param request   The current web request.
      * @return ResponseEntity with a response for EntityException.
      */
     @ExceptionHandler(EntityException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Object> handleNoSuchElementFoundException(
             EntityException exception, WebRequest request) {
+        // set errors message and content to request attribute for further reading in interceptor
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), exception.getMessage());
+        passMessageToControllerLogInterceptor(request, errorResponse);
         log.warn("Failed to find the requested entity check passed id", exception);
         return buildErrorResponse(exception, HttpStatus.NOT_FOUND, request);
     }
@@ -101,8 +100,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AuthnException.class)
     public ResponseEntity<Object> handleAuthnException(
             AuthnException exception, WebRequest request) {
-        log.warn("Failed to find the requested entity check passed id", exception);
+        // set errors message and content to request attribute for further reading in interceptor
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN.value(), exception.getMessage());
+        passMessageToControllerLogInterceptor(request, errorResponse);
+        log.warn("Authentication problem ", exception);
         return buildErrorResponse(exception, HttpStatus.FORBIDDEN, request);
+    }
+
+
+    /**
+     * Handle custom validation exception
+     * @param exception
+     * @param request The current web request.
+     * @return ResponseEntity with a response from ValidateException.
+     */
+    @ExceptionHandler(ValidateException.class)
+    public ResponseEntity<Object> handleCustomValidateException(
+            ValidateException exception, WebRequest request) {
+        // set errors message and content to request attribute for further reading in interceptor
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), exception.getMessage());
+        passMessageToControllerLogInterceptor(request, errorResponse);
+        log.warn("Validate exception occurred ", exception);
+        return buildErrorResponse(exception, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
 
@@ -119,5 +138,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                         WebRequest request) {
         return ResponseEntity.status(httpStatus).body(
                 new ErrorResponse(httpStatus.value(), exception.getMessage()));
+    }
+
+
+    private void passMessageToControllerLogInterceptor(WebRequest webRequest, ErrorResponse errorResponse){
+        // Cast WebRequest to ServletWebRequest to access HttpServletRequest and then has access to this attribute in interceptor
+        if (webRequest instanceof ServletWebRequest) {
+            HttpServletRequest request = ((ServletWebRequest) webRequest).getRequest();
+            // Set the error message in HttpServletRequest so that the interceptor can log it
+            request.setAttribute("errorMessage", errorResponse.getMessage());
+            request.setAttribute("errorContent", errorResponse.getErrors());
+        }
     }
 }

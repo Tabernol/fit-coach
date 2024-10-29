@@ -24,12 +24,6 @@ public class TrainerController {
 
     private final TrainerService trainerService;
 
-
-    //    @GetMapping()
-//    public ResponseEntity<List<CoachDto>> getAll() {
-//        return ResponseEntity.status(HttpStatus.OK).body(coachService.getAll());
-//    }
-//
     @GetMapping("/{username}")
     public ResponseEntity<TrainerProfileDto> getTrainer(@PathVariable("username") String username) throws EntityException {
         return ResponseEntity.status(HttpStatus.OK).body(trainerService.findByUsername(username));
@@ -70,7 +64,7 @@ public class TrainerController {
     @PatchMapping("/{username}/toggle-status")
     public ResponseEntity<String> toggleStatus(
             @PathVariable("username") String username,
-            @RequestBody ToggleStatusDto statusDto) throws EntityException, ValidateException {
+            @Validated(Create.class) @RequestBody ToggleStatusDto statusDto) throws EntityException, ValidateException {
         return ResponseEntity.status(HttpStatus.OK).body(trainerService.changeStatus(username, statusDto));
     }
 }

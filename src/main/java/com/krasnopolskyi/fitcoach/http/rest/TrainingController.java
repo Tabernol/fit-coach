@@ -3,6 +3,7 @@ package com.krasnopolskyi.fitcoach.http.rest;
 import com.krasnopolskyi.fitcoach.dto.request.TrainingDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
+import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.service.TrainingService;
 import com.krasnopolskyi.fitcoach.validation.Create;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,10 @@ public class TrainingController {
 
 
     @PostMapping
-    public ResponseEntity<TrainingResponseDto> addTraining(@Validated(Create.class) @RequestBody TrainingDto trainingDto) throws EntityException {
+    public ResponseEntity<TrainingResponseDto> addTraining(
+            @Validated(Create.class)
+            @RequestBody TrainingDto trainingDto)
+            throws EntityException, ValidateException {
         return ResponseEntity.status(HttpStatus.CREATED).body(trainingService.save(trainingDto));
     }
 }
