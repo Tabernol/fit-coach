@@ -2,9 +2,7 @@ package com.krasnopolskyi.fitcoach.config;
 
 
 import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -20,7 +18,9 @@ public class SwaggerConfig {
         final String securitySchemeName = "bearerAuth";
 
         Info gym_api = new Info().title("Gym API")
-                .description("This gym application with API end-points.")
+                .description("This is a gym app with API endpoints." +
+                        "<br><br> Trainee: <br> username= john.doe <br> password= root" +
+                        "<br><br> Trainer: <br> username= usain.bolt <br> password= root")
                 .version("v0.0.1")
                 .license(new License().name("Created by Maksym Krasnopolskyi").url("https://www.linkedin.com/in/maksym-krasnopolskyi-10a245245/"));
 

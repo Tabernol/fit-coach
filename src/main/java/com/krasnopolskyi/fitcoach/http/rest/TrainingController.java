@@ -6,6 +6,7 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.service.TrainingService;
 import com.krasnopolskyi.fitcoach.validation.Create;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,8 @@ public class TrainingController {
      * @throws EntityException will be throw if trainer or trainee does not exist
      * @throws ValidateException will be throw if trainee or/and trainer profile deactivated
      */
+    @Operation(summary = "Create a new training session",
+            description = "Creates a training session between a trainer and a trainee. Throws exceptions if profiles are inactive or do not exist.")
     @PostMapping
     public ResponseEntity<TrainingResponseDto> addTraining(
             @Validated(Create.class)

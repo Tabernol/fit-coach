@@ -8,6 +8,7 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.service.TraineeService;
 import com.krasnopolskyi.fitcoach.validation.Create;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,8 @@ public class TraineeController {
      * @param traineeDto dto with user fields
      * @return credentials for authentication generated username and password
      */
+    @Operation(summary = "Create a new trainee",
+            description = "Creates a new trainee and returns the generated username and password for authentication.")
     @PostMapping("/public")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserCredentials> createTrainee(
@@ -41,6 +44,7 @@ public class TraineeController {
      * @return dto with data about trainee
      * @throws EntityException will be throw if trainee does not exist with such username
      */
+    @Operation(summary = "Get trainee profile by username", description = "Fetches the profile information of a trainee based on the provided username.")
     @GetMapping("/{username}")
     public ResponseEntity<TraineeProfileDto> getTrainee(@PathVariable("username") String username) throws EntityException {
         return ResponseEntity.status(HttpStatus.OK).body(traineeService.findByUsername(username));
@@ -52,6 +56,8 @@ public class TraineeController {
      * @return List of trainers in short format
      * @throws EntityException will be throw if trainee does not exist with such username, but trainer profile can exist
      */
+    @Operation(summary = "Get trainers not assigned to trainee",
+            description = "Retrieves all trainers who have not yet had a training session with the specified trainee.")
     @GetMapping("/{username}/not-assigned-trainers")
     public ResponseEntity<List<TrainerProfileShortDto>> getAllActiveTrainersForTrainee(
             @PathVariable("username") String username) throws EntityException {
@@ -68,6 +74,8 @@ public class TraineeController {
      * @return List of trainings otherwise empty list
      * @throws EntityException will be thrown if target username does not exist as trainee
      */
+    @Operation(summary = "Filter trainee's training sessions",
+            description = "Provides filtering functionality for the training sessions of a trainee.")
     @GetMapping("/{username}/trainings")
     public ResponseEntity<List<TrainingResponseDto>> findTraining(
             @PathVariable String username,
@@ -94,6 +102,8 @@ public class TraineeController {
      * @return Dto with other fields
      * @throws EntityException will be throw if trainee does not exist with such username
      */
+    @Operation(summary = "Update trainee profile",
+            description = "Updates the trainee profile with the provided details.")
     @PutMapping()
     public ResponseEntity<TraineeProfileDto> updateTrainee(
             @Validated(Create.class) @RequestBody TraineeUpdateDto traineeDto) throws EntityException {
@@ -107,6 +117,8 @@ public class TraineeController {
      * @return List of trainers
      * @throws EntityException will be thrown if username of trainee or trainer does not exist
      */
+    @Operation(summary = "Update trainee trainers",
+            description = "Updates the list of trainers with whom the trainee has had training sessions.")
     @PutMapping("/{username}/update-trainers")
     public ResponseEntity<List<TrainerProfileShortDto>> updateTrainers(
             @PathVariable String username,
@@ -122,6 +134,8 @@ public class TraineeController {
      * @throws EntityException if username does not exist
      * @throws ValidateException if username in pathVariable and in body are different
      */
+    @Operation(summary = "Toggle trainee status",
+            description = "Changes the status (active/inactive) of the trainee.")
     @PatchMapping("/{username}/toggle-status")
     public ResponseEntity<String> toggleStatus(
             @PathVariable("username") String username,
@@ -135,6 +149,8 @@ public class TraineeController {
      * @param username of target trainee
      * @return noContent when trainee was deleted or not found if trainee does not exist with such username
      */
+    @Operation(summary = "Delete trainee",
+            description = "Deletes the trainee and all associated data in Cascade.ALL mode.")
     @DeleteMapping("/{username}")
     public ResponseEntity<?> deleteTrainee(@PathVariable("username") String username) {
         return traineeService.delete(username) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();

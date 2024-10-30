@@ -8,6 +8,7 @@ import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.service.TrainerService;
 import com.krasnopolskyi.fitcoach.validation.Create;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,8 @@ public class TrainerController {
      * @return to with data about trainer
      * @throws EntityException will be throw if trainer does not exist with such username
      */
+    @Operation(summary = "Get trainer profile by username",
+            description = "Fetches the profile information of a trainer based on the provided username.")
     @GetMapping("/{username}")
     public ResponseEntity<TrainerProfileDto> getTrainer(@PathVariable("username") String username) throws EntityException {
         return ResponseEntity.status(HttpStatus.OK).body(trainerService.findByUsername(username));
@@ -44,6 +47,8 @@ public class TrainerController {
      * @return List of trainings otherwise empty list
      * @throws EntityException will be thrown if target username does not exist as trainer
      */
+    @Operation(summary = "Filter trainings by trainer",
+            description = "Filters the training sessions for a trainer based on optional parameters like period and partner (trainee).")
     @GetMapping("/{username}/trainings")
     public ResponseEntity<List<TrainingResponseDto>> findTraining(
             @PathVariable String username,
@@ -68,6 +73,8 @@ public class TrainerController {
      * @return credentials for authentication generated username and password
      * @throws EntityException if training type does not exist
      */
+    @Operation(summary = "Create a new trainer",
+            description = "Creates a new trainer profile, returning the generated credentials for authentication.")
     @PostMapping("/public")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserCredentials> createTrainer(
@@ -81,6 +88,8 @@ public class TrainerController {
      * @return Dto with other fields
      * @throws EntityException will be throw if trainer does not exist with such username
      */
+    @Operation(summary = "Update trainer profile",
+            description = "Updates an existing trainer's profile with new information.")
     @PutMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<TrainerProfileDto> updateTrainer(
@@ -96,6 +105,8 @@ public class TrainerController {
      * @throws EntityException if username does not exist
      * @throws ValidateException if username in pathVariable and in body are different
      */
+    @Operation(summary = "Toggle trainer status",
+            description = "Toggles the active status of a trainer based on the provided username and status information.")
     @PatchMapping("/{username}/toggle-status")
     public ResponseEntity<String> toggleStatus(
             @PathVariable("username") String username,

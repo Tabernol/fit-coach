@@ -2,6 +2,7 @@ package com.krasnopolskyi.fitcoach.http.rest;
 
 import com.krasnopolskyi.fitcoach.entity.TrainingType;
 import com.krasnopolskyi.fitcoach.service.TrainingTypeService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,8 @@ public class TrainingTypeController {
     /**
      * @return List with all available training types
      */
+    @Operation(summary = "Retrieve all training types",
+            description = "Returns a list of all available training types.")
     @GetMapping
     public ResponseEntity<List<TrainingType>> findAll() {
         return ResponseEntity.status(HttpStatus.OK).body(trainingTypeService.findAll());

@@ -4,10 +4,10 @@ import com.krasnopolskyi.fitcoach.dto.request.ChangePasswordDto;
 import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
-import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.service.AuthenticationService;
 import com.krasnopolskyi.fitcoach.service.UserService;
 import com.krasnopolskyi.fitcoach.validation.Create;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +27,8 @@ public class AuthnController {
      * @throws EntityException throws if username does not exist
      * @throws AuthnException throws if password is wrong
      */
+    @Operation(summary = "User login",
+            description = "Authenticates a user and returns a JWT token for further authorization.")
     @GetMapping("/login/{username}/{pass}") // better use POST method here
     public ResponseEntity<String> login(
             @PathVariable("username") String username,
@@ -41,6 +43,8 @@ public class AuthnController {
      * @throws AuthnException  throws if username does not exist
      * @throws EntityException throws if password is wrong
      */
+    @Operation(summary = "Change user password",
+            description = "Allows users to change their password by providing the current password and the new password.")
     @PutMapping("/change-pass")
     public ResponseEntity<String> changePassword(
             @Validated(Create.class) @RequestBody ChangePasswordDto changePasswordDto)
