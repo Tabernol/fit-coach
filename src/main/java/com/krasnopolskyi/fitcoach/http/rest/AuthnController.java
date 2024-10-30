@@ -23,14 +23,15 @@ public class AuthnController {
 
     /**
      * Provide one end-point for authentication users
-     * @param credentials username and password
      * @return JWT token for further authentication
      * @throws EntityException throws if username does not exist
      * @throws AuthnException throws if password is wrong
      */
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserCredentials credentials) throws EntityException, AuthnException {
-        return ResponseEntity.ok(authenticationService.logIn(credentials));
+    @GetMapping("/login/{username}/{pass}") // better use POST method here
+    public ResponseEntity<String> login(
+            @PathVariable("username") String username,
+            @PathVariable("pass") String password) throws EntityException, AuthnException {
+        return ResponseEntity.ok(authenticationService.logIn(new UserCredentials(username, password)));
     }
 
     /**

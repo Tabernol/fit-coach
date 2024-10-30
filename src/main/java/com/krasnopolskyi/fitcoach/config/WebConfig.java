@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/v3/api-docs/**",       // Exclude OpenAPI specification
                         "/swagger-resources/**", // Exclude Swagger resources
                         "/webjars/**",           // Exclude webjars for Swagger UI dependencies
-                        "/api/v1/authn/login",   // Exclude login endpoint
+                        "/api/v1/authn/login/**",   // Exclude login endpoint
                         "/api/v1/trainees/public",
                         "/api/v1/trainers/public"
                 );

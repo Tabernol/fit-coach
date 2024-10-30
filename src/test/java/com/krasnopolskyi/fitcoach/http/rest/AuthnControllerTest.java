@@ -48,7 +48,7 @@ class AuthnControllerTest {
         when(authenticationService.logIn(any())).thenReturn(token);
 
         // Act
-        ResponseEntity<String> response = authnController.login(credentials);
+        ResponseEntity<String> response = authnController.login(credentials.username(), credentials.password());
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
