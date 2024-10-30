@@ -72,7 +72,7 @@ public class UserService {
      */
     private String generateUsername(String firstName, String lastName) {
         int count = 1;
-        String template = firstName.toLowerCase() + "_" + lastName.toLowerCase();
+        String template = firstName.toLowerCase() + "." + lastName.toLowerCase();
         String username = template;
         while (isUsernameExist(username)){
             username = template + count;
