@@ -74,7 +74,7 @@ public class TraineeServiceIT {
 
     @Test
     void updateTraineeTrainers() throws EntityException {
-        List<String> trainers = List.of("arnold.schwarzenegger", "rich.froning");
+        List<String> trainers = List.of("arnold.schwarzenegger", "bruce.lee");
         List<TrainerProfileShortDto> updatedTrainers = traineeService.updateTrainers("john.doe", trainers);
 
         Set<String> trainerUsernames = updatedTrainers
@@ -85,7 +85,7 @@ public class TraineeServiceIT {
 
         assertEquals(2, updatedTrainers.size());
         assertTrue(trainerUsernames.contains("arnold.schwarzenegger"));
-        assertTrue(trainerUsernames.contains("rich.froning"));
+        assertTrue(trainerUsernames.contains("bruce.lee"));
     }
 
     @Test
