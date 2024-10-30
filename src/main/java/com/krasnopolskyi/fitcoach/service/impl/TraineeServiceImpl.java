@@ -1,6 +1,7 @@
 package com.krasnopolskyi.fitcoach.service.impl;
 
 import com.krasnopolskyi.fitcoach.dto.RegistrationResponse;
+import com.krasnopolskyi.fitcoach.dto.coach.CoachInfo;
 import com.krasnopolskyi.fitcoach.exception.UserNotFoundException;
 import com.krasnopolskyi.fitcoach.dto.trainee.TraineeCreateRequest;
 import com.krasnopolskyi.fitcoach.dto.trainee.TraineeDto;
@@ -11,6 +12,8 @@ import com.krasnopolskyi.fitcoach.service.TraineeService;
 import com.krasnopolskyi.fitcoach.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class TraineeServiceImpl implements TraineeService {
@@ -30,7 +33,8 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public TraineeDto get(String username) throws UserNotFoundException {
         Trainee trainee = findByUsername(username);
-        return mapToDto(trainee);
+        List<CoachInfo> coaches = repository.findAllCoachesByTraineeUsername(username);
+        return mapToDto(trainee, coaches);
     }
 
     @Override
@@ -64,7 +68,9 @@ public class TraineeServiceImpl implements TraineeService {
         trainee.setAddress(traineeDto.getAddress());
         trainee.setDateOfBirth(traineeDto.getDateOfBirth());
 
-        return mapToDto(repository.save(trainee));
+        List<CoachInfo> coaches = repository.findAllCoachesByTraineeUsername(traineeDto.getUsername());
+
+        return mapToDto(repository.save(trainee), coaches);
     }
 
     @Override
@@ -74,7 +80,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
 
-    private TraineeDto mapToDto(Trainee trainee){
+    private TraineeDto mapToDto(Trainee trainee, List<CoachInfo> coaches){
         return TraineeDto.builder()
                 .firstName(trainee.getUser().getFirstName())
                 .lastName(trainee.getUser().getLastName())
@@ -82,7 +88,7 @@ public class TraineeServiceImpl implements TraineeService {
                 .dateOfBirth(trainee.getDateOfBirth())
                 .address(trainee.getAddress())
                 .isActive(trainee.getUser().isActive())
-                // todo add coaches
+                .coaches(coaches)
                 .build();
     }
 
