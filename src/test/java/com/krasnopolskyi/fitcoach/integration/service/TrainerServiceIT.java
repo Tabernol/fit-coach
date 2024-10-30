@@ -27,11 +27,11 @@ public class TrainerServiceIT {
 
     @Test
     void saveTrainer() throws EntityException {
-        TrainerDto trainerDto = new TrainerDto("Bruce", "Lee", 1);
+        TrainerDto trainerDto = new TrainerDto("Bruce", "Le", 1);
         UserCredentials savedUser = trainerService.save(trainerDto);
 
         assertNotNull(savedUser);
-        assertEquals("bruce.lee", savedUser.username());
+        assertEquals("bruce.le", savedUser.username());
     }
 
     @Test
