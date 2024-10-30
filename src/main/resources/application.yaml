@@ -2,7 +2,7 @@ spring.application.name: fit-coach
 
 spring:
   datasource:
-    url: jdbc:h2:mem:krasnopolskyi-gym
+    url: jdbc:h2:mem:krasnopolskyi-fit-coach
     username: maks
     password:
   jpa:
