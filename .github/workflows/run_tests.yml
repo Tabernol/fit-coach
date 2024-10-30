@@ -12,15 +12,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8
-        options: --health-cmd "mysqladmin ping --silent" --health-interval 10s --health-timeout 5s --health-retries 3
-        env:
-          MYSQL_ROOT_PASSWORD: root_password
-          MYSQL_DATABASE: test_db
-        ports:
-          - 3306:3306
+#    services:
+#      mysql:
+#        image: mysql:8
+#        options: --health-cmd "mysqladmin ping --silent" --health-interval 10s --health-timeout 5s --health-retries 3
+#        env:
+#          MYSQL_ROOT_PASSWORD: root_password
+#          MYSQL_DATABASE: test_db
+#        ports:
+#          - 3306:3306
 
     steps:
       # Step 1: Checkout the repository
@@ -38,13 +38,13 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # Step 4: Wait for MySQL service to be ready
-      - name: Wait for MySQL service to be ready
-        run: sleep 5
+#      # Step 4: Wait for MySQL service to be ready
+#      - name: Wait for MySQL service to be ready
+#        run: sleep 5
 
-      # Step 5: Run Liquibase migrations (if required)
-      - name: Run Liquibase Migrations
-        run: ./gradlew update
+#      # Step 5: Run Liquibase migrations (if required)
+#      - name: Run Liquibase Migrations
+#        run: ./gradlew update
 
       # Step 6: Build the project
       - name: Build with Gradle
