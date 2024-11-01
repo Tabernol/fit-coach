@@ -1,6 +1,6 @@
 # Fit-coach CRM System
 
-This project is a REST-based application designed to manage trainee and trainer profiles, as well as training sessions, within a fit-coach(gym) CRM system. It features profile registration, login functionality, and various profile management operations. The system includes role-based validation, JWT authentication, and advanced logging for transactions and REST calls.
+This project is a REST-based application designed to manage trainee and trainer profiles, as well as training sessions, within a fit-coach(gym) CRM system. It features profile registration, login functionality, and various profile management operations. The system includes JWT authentication, and advanced logging for transactions and REST calls.
 
 ## Table of Contents
 - [Project Overview](#project-overview)
