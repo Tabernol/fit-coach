@@ -31,7 +31,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/webjars/**",           // Exclude webjars for Swagger UI dependencies
                         "/api/v1/authn/login/**",   // Exclude login endpoint
                         "/api/v1/trainees/public",
-                        "/api/v1/trainers/public"
+                        "/api/v1/trainers/public",
+                        "/actuator/*"
                 );
     }
 }
