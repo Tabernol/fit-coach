@@ -6,6 +6,7 @@ import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
+import com.krasnopolskyi.fitcoach.http.metric.TrackCountMetric;
 import com.krasnopolskyi.fitcoach.service.TrainerService;
 import com.krasnopolskyi.fitcoach.validation.Create;
 import io.swagger.v3.oas.annotations.Operation;
@@ -77,6 +78,8 @@ public class TrainerController {
             description = "Creates a new trainer profile, returning the generated credentials for authentication.")
     @PostMapping("/public")
     @ResponseStatus(HttpStatus.CREATED)
+    @TrackCountMetric(name = "api_trainer_create",
+            description = "Number of requests to /api/v1/trainers/public endpoint")
     public ResponseEntity<UserCredentials> createTrainer(
             @Validated(Create.class) @RequestBody TrainerDto trainerDto) throws EntityException {
         return ResponseEntity.status(HttpStatus.CREATED).body(trainerService.save(trainerDto));
