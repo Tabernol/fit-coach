@@ -10,6 +10,7 @@ import com.krasnopolskyi.fitcoach.repository.TraineeRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainingRepository;
 import com.krasnopolskyi.fitcoach.repository.UserRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,9 @@ class TrainingServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private MeterRegistry meterRegistry;
+
     @InjectMocks
     private TrainingService trainingService;
 
@@ -52,7 +56,7 @@ class TrainingServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        trainingService = new TrainingService(trainingRepository, traineeRepository, trainerRepository, userRepository);
+        trainingService = new TrainingService(trainingRepository, traineeRepository, trainerRepository, userRepository, meterRegistry);
 
         mockUser = new User();
         mockUser.setUsername("john.doe");
