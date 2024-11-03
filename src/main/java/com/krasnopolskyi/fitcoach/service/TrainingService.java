@@ -12,6 +12,8 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.*;
 import com.krasnopolskyi.fitcoach.utils.mapper.TrainingMapper;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class TrainingService {
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
     private final UserRepository userRepository;
+
+    private final MeterRegistry meterRegistry;
 
     @Transactional
     public TrainingResponseDto save(TrainingDto trainingDto) throws EntityException, ValidateException {
@@ -58,7 +62,7 @@ public class TrainingService {
     }
 
     private void isUserActive(User user) throws ValidateException {
-        if(!user.getIsActive()){
+        if (!user.getIsActive()) {
             throw new ValidateException("Profile " + user.getFirstName() + " " + user.getLastName() +
                     " is currently disabled");
         }
@@ -69,7 +73,10 @@ public class TrainingService {
         userRepository.findByUsername(filter.getOwner())
                 .orElseThrow(() -> new EntityException("Could not found user: " + filter.getOwner()));
 
-        return trainingRepository.getFilteredTrainings(
+        // start timer for find trainings and put to metrics
+        Timer.Sample timer = Timer.start(meterRegistry);
+
+        List<TrainingResponseDto> trainings = trainingRepository.getFilteredTrainings(
                         filter.getOwner(),
                         filter.getPartner(),
                         filter.getStartDate(),
@@ -78,5 +85,12 @@ public class TrainingService {
                 ).stream()
                 .map(TrainingMapper::mapToDto)
                 .toList();
+
+        // stop timer
+        timer.stop(Timer.builder("service_trainings_find")
+                .description("trainings searching timer")
+                .register(meterRegistry));
+
+        return trainings;
     }
 }
