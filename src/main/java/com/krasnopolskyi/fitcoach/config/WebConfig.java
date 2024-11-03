@@ -32,7 +32,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/v1/authn/login/**",   // Exclude login endpoint
                         "/api/v1/trainees/public",
                         "/api/v1/trainers/public",
-                        "/actuator/*"
+                        "/actuator/**",
+                        "/favicon.ico"
                 );
     }
 }
