@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/fit-coach-dev?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3306/fit_coach_dev?createDatabaseIfNotExist=true
     username: root
     password: root
   jpa:
@@ -27,6 +27,10 @@ management:
   metrics:
     enable:
       all: true
+    tags:
+      application: ${spring.application.name}
+    export:
+      prometheus: true
   endpoint:
     health:
       show-details: always

@@ -10,7 +10,9 @@ import com.krasnopolskyi.fitcoach.repository.TraineeRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainingRepository;
 import com.krasnopolskyi.fitcoach.repository.UserRepository;
+import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,6 +45,12 @@ class TrainingServiceTest {
     @Mock
     private MeterRegistry meterRegistry;
 
+    @Mock
+    private Timer timer;
+    @Mock
+    private MeterRegistry.Config config;
+    @Mock
+    private Clock clock;
     @InjectMocks
     private TrainingService trainingService;
 
@@ -79,6 +87,8 @@ class TrainingServiceTest {
         mockTrainer = new Trainer();
         mockTrainer.setUser(mockUserTrainer);
         mockTrainer.setSpecialization(new TrainingType(1, "Cardio"));
+
+        meterRegistry.config();
     }
 
     @Test
@@ -163,7 +173,9 @@ class TrainingServiceTest {
                 60);
 
         when(userRepository.findByUsername(mockTrainee.getUser().getUsername())).thenReturn(Optional.of(mockTrainee.getUser()));
-
+        // Mock the behavior of the MeterRegistry
+        when(meterRegistry.config()).thenReturn(config);
+        when(meterRegistry.timer(anyString())).thenReturn(timer);
 
         Training training = new Training();
         training.setTrainee(mockTrainee);

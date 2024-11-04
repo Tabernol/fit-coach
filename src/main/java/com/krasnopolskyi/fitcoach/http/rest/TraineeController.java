@@ -34,7 +34,7 @@ public class TraineeController {
      */
     @Operation(summary = "Create a new trainee",
             description = "Creates a new trainee and returns the generated username and password for authentication.")
-    @PostMapping("/public")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     @TrackCountMetric(name = "api_trainee_create",
             description = "Number of requests to /api/v1/trainees/public endpoint")
@@ -63,7 +63,7 @@ public class TraineeController {
      */
     @Operation(summary = "Get trainers not assigned to trainee",
             description = "Retrieves all trainers who have not yet had a training session with the specified trainee.")
-    @GetMapping("/{username}/not-assigned-trainers")
+    @GetMapping("/{username}/trainers/not-assigned")
     public ResponseEntity<List<TrainerProfileShortDto>> getAllActiveTrainersForTrainee(
             @PathVariable("username") String username) throws EntityException {
         return ResponseEntity.status(HttpStatus.OK).body(traineeService.findAllNotAssignedTrainersByTrainee(username));
@@ -124,7 +124,7 @@ public class TraineeController {
      */
     @Operation(summary = "Update trainee trainers",
             description = "Updates the list of trainers with whom the trainee has had training sessions.")
-    @PutMapping("/{username}/update-trainers")
+    @PutMapping("/{username}/trainers/update")
     public ResponseEntity<List<TrainerProfileShortDto>> updateTrainers(
             @PathVariable String username,
             @RequestBody List<String> trainerUsernames) throws EntityException {

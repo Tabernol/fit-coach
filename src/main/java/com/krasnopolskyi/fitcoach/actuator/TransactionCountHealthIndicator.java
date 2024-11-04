@@ -7,22 +7,18 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Component
 public class TransactionCountHealthIndicator implements HealthIndicator {
-
     private static final String LOG_DIRECTORY_PATH = "log";
 
+    // passes to actuator number of transaction today
     @Override
     public Health health() {
 
-
-
         try {
-            // Get today's log directory based on the current date
             String todayDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             String transactionLogPath = LOG_DIRECTORY_PATH + "/" + todayDate + "/transaction.log";
 

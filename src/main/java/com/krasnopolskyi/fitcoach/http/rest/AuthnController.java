@@ -29,11 +29,10 @@ public class AuthnController {
      */
     @Operation(summary = "User login",
             description = "Authenticates a user and returns a JWT token for further authorization.")
-    @GetMapping("/login/{username}/{pass}") // better use POST method here
-    public ResponseEntity<String> login(
-            @PathVariable("username") String username,
-            @PathVariable("pass") String password) throws EntityException, AuthnException {
-        return ResponseEntity.ok(authenticationService.logIn(new UserCredentials(username, password)));
+    @PostMapping("/login") // better use POST method here
+    public ResponseEntity<String> login( @RequestBody UserCredentials userCredentials)
+            throws EntityException, AuthnException {
+        return ResponseEntity.ok(authenticationService.logIn(userCredentials));
     }
 
     /**
@@ -45,7 +44,7 @@ public class AuthnController {
      */
     @Operation(summary = "Change user password",
             description = "Allows users to change their password by providing the current password and the new password.")
-    @PutMapping("/change-pass")
+    @PutMapping("/pass/change")
     public ResponseEntity<String> changePassword(
             @Validated(Create.class) @RequestBody ChangePasswordDto changePasswordDto)
             throws AuthnException, EntityException {

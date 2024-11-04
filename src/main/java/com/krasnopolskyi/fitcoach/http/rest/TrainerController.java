@@ -76,7 +76,7 @@ public class TrainerController {
      */
     @Operation(summary = "Create a new trainer",
             description = "Creates a new trainer profile, returning the generated credentials for authentication.")
-    @PostMapping("/public")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     @TrackCountMetric(name = "api_trainer_create",
             description = "Number of requests to /api/v1/trainers/public endpoint")
