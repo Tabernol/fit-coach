@@ -1,6 +1,8 @@
 package com.krasnopolskyi.fitcoach.http.handler;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
+import com.krasnopolskyi.fitcoach.exception.ValidateException;
+import jakarta.validation.Valid;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -78,5 +80,19 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
         ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
         assertEquals("Authentication failed", errorResponse.getMessage());
+    }
+
+    @Test
+    void handleValidateException() {
+        // Arrange
+        ValidateException exception = new ValidateException("Validation failed");
+
+        // Act
+        ResponseEntity<Object> responseEntity = globalExceptionHandler.handleCustomValidateException(exception, webRequest);
+
+        // Assert
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, responseEntity.getStatusCode());
+        ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+        assertEquals("Validation failed", errorResponse.getMessage());
     }
 }
