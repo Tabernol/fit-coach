@@ -151,20 +151,56 @@ docker-compose up --build
 This command will start the application and any required services (e.g., MySQL) using Docker, with the dev profile
 active.
 
-### 3. Viewing Metrics in Grafana
-To monitor application metrics using Prometheus and Grafana:
+## Health Checks and Metrics
 
-1. Ensure that Prometheus and Grafana are running in your environment. If you're using Docker, you can start them by adding the appropriate services to your docker-compose.yml file.
+The application includes custom health checks and metrics to monitor both system availability and performance.
 
-2. Access Prometheus at http://localhost:9090 to verify it's running and collecting data from the application's /actuator/prometheus endpoint.
+You can now view existing dashboards or create new ones to monitor the application's metrics. The metrics are
+available through the /actuator/prometheus endpoint exposed by the application.
 
-3. Access Grafana at http://localhost:3000 with the default credentials:
+#### If you're using Docker, you can use them for monitoring
 
-* Username: admin
+- Access Prometheus at http://localhost:9090 to verify it's running and collecting data from the application's
+  /actuator/prometheus endpoint.
+
+- Access Grafana at http://localhost:3000 with the default credentials:
+
+- Username: admin
 - Password: admin
-4. Once logged into Grafana, add Prometheus as a data source:
+
+Once logged into Grafana, add Prometheus as a data source:
 
 - Navigate to Configuration > Data Sources.
 - Select Add data source, choose Prometheus, and set the URL to http://localhost:9090.
 - Click Save & Test to confirm the connection.
-5. You can now view existing dashboards or create new ones to monitor the application's metrics. The metrics are available through the /actuator/prometheus endpoint exposed by the application.
+
+### Health Checks
+
+These health checks and metrics can be monitored via Prometheus and visualized in Grafana by adding the
+/actuator/prometheus endpoint as a Prometheus data source.
+
+Available at http://localhost:8080/actuator/health
+
+1. Transaction Count Health Check (transactionCount):
+   This health check tracks the number of transactions processed by the system today, allowing you to monitor daily
+   transaction volume.
+
+2. Remote Service Availability Health Check (remoteService):
+   This health check monitors the availability of a specific external service, ensuring that the system can interact
+   with required remote services.
+
+### Metrics
+
+Available at http://localhost:8080/actuator/prometheus
+
+1. Trainee Creation Requests (api_trainee_create):
+   This metric tracks how many times the application has received a request to create a trainee profile, providing
+   insight into usage patterns.
+
+2. Trainer Creation Requests (api_trainer_create):
+   This metric tracks the number of requests to create a trainer profile, allowing you to monitor how frequently trainer
+   profiles are being created.
+
+3. Training Lookup Duration (service_trainings_find):
+   This metric measures how much time the application takes to find all training sessions associated with a specific
+   username, helping to assess the performance of the training search functionality.
