@@ -31,13 +31,13 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0' //swagger
-
+    implementation 'org.liquibase:liquibase-core' // database migrations
 
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5' //jwt
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5' //jwt
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5' //jwt
 
-    implementation 'org.liquibase:liquibase-core'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
