@@ -152,8 +152,19 @@ This command will start the application and any required services (e.g., MySQL) 
 active.
 
 ### 3. Viewing Metrics in Grafana
-   To monitor application metrics in Grafana:
+To monitor application metrics using Prometheus and Grafana:
 
-1. Make sure you have Prometheus and Grafana running in your environment.
-2. Access Grafana at http://localhost:3000 and add Prometheus as a data source.
-3. View or create dashboards to monitor metrics exposed by the application, which are available via the /actuator/prometheus endpoint.
+1. Ensure that Prometheus and Grafana are running in your environment. If you're using Docker, you can start them by adding the appropriate services to your docker-compose.yml file.
+
+2. Access Prometheus at http://localhost:9090 to verify it's running and collecting data from the application's /actuator/prometheus endpoint.
+
+3. Access Grafana at http://localhost:3000 with the default credentials:
+
+* Username: admin
+- Password: admin
+4. Once logged into Grafana, add Prometheus as a data source:
+
+- Navigate to Configuration > Data Sources.
+- Select Add data source, choose Prometheus, and set the URL to http://localhost:9090.
+- Click Save & Test to confirm the connection.
+5. You can now view existing dashboards or create new ones to monitor the application's metrics. The metrics are available through the /actuator/prometheus endpoint exposed by the application.
