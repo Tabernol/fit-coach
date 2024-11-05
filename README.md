@@ -113,7 +113,8 @@ except for the registration of new profiles and the login endpoint.
 git clone https://github.com/Tabernol/fit-coach
 cd fit-coach
 ```
-##Running the Application
+
+## Running the Application
 
 ### 1. Running the Application Locally
 
@@ -125,10 +126,28 @@ To run the application locally, follow these steps:
 
 3. Run the application with the local profile by using the following command:
 
-bash
-```
+```bash
 ./gradlew bootRun --args='--spring.profiles.active=local'
 ```
 
 The application will now start and connect to the local MySQL database.
+
+## 2. Running the Application with Docker (Development Profile)
+
+To run the application using Docker with the dev profile:
+
+1. Build the application JAR using:
+
+```bash
+./gradlew clean build
+```
+
+2. Run the application using docker-compose:
+
+```bash
+docker-compose up --build
+```
+
+This command will start the application and any required services (e.g., MySQL) using Docker, with the dev profile
+active.
 
