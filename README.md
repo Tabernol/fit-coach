@@ -12,6 +12,8 @@ management operations. The system includes JWT authentication, and advanced logg
 - [Logging](#logging)
 - [Authentication](#authentication)
 - [Setup Instructions](#setup-instructions)
+- [Running the Application](#running-the-application)
+- [Health Checks and Metrics](#health-checks-and-metrics)
 
 ## Project Overview
 
@@ -155,8 +157,7 @@ active.
 
 The application includes custom health checks and metrics to monitor both system availability and performance.
 
-You can now view existing dashboards or create new ones to monitor the application's metrics. The metrics are
-available through the /actuator/prometheus endpoint exposed by the application.
+You can now view using http://localhost:8080/actuator
 
 #### If you're using Docker, you can use them for monitoring
 
@@ -179,7 +180,7 @@ Once logged into Grafana, add Prometheus as a data source:
 These health checks and metrics can be monitored via Prometheus and visualized in Grafana by adding the
 /actuator/prometheus endpoint as a Prometheus data source.
 
-Available at http://localhost:8080/actuator/health
+Also, available at http://localhost:8080/actuator/health
 
 1. Transaction Count Health Check (transactionCount):
    This health check tracks the number of transactions processed by the system today, allowing you to monitor daily
@@ -191,7 +192,7 @@ Available at http://localhost:8080/actuator/health
 
 ### Metrics
 
-Available at http://localhost:8080/actuator/prometheus
+Also, available at http://localhost:8080/actuator/prometheus
 
 1. Trainee Creation Requests (api_trainee_create):
    This metric tracks how many times the application has received a request to create a trainee profile, providing
