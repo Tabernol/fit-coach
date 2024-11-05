@@ -59,7 +59,7 @@ class TraineeControllerTest {
         when(traineeService.save(traineeDto)).thenReturn(userCredentials);
 
         // Act & Assert (MockMvc way)
-        mockMvc.perform(post("/api/v1/trainees")
+        mockMvc.perform(post("/api/v1/trainees/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(traineeDto)))
                 .andExpect(status().isCreated())

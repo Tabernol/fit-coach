@@ -34,7 +34,7 @@ public class TraineeController {
      */
     @Operation(summary = "Create a new trainee",
             description = "Creates a new trainee and returns the generated username and password for authentication.")
-    @PostMapping()
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     @TrackCountMetric(name = "api_trainee_create",
             description = "Number of requests to /api/v1/trainees/public endpoint")
