@@ -109,10 +109,10 @@ except for the registration of new profiles and the login endpoint.
 
 ### Clone the Repository
 
-``bash
+```bash
 git clone https://github.com/Tabernol/fit-coach
 cd fit-coach
-``
+```
 ##Running the Application
 
 ### 1. Running the Application Locally
@@ -126,9 +126,9 @@ To run the application locally, follow these steps:
 3. Run the application with the local profile by using the following command:
 
 bash
-``
+```
 ./gradlew bootRun --args='--spring.profiles.active=local'
-``
+```
 
 The application will now start and connect to the local MySQL database.
 
