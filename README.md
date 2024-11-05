@@ -62,14 +62,17 @@ Most services require authentication except for profile creation.
 
 - **Fixed Training Types**: A fixed list of training types is provided, which cannot be updated from the application.
 
-## Technologies Used
+## Technologies and tools used
 
-- **Spring Framework**: Core dependency injection, RESTful APIs, transaction management, and AOP.
+- **Gradle** For building the project and managing dependencies
+- **Spring Framework**: Core dependency, RESTful APIs, transaction management, validation, actuator and AOP.
 - **Hibernate**: ORM for managing database entities.
-- **H2 Database**: In-memory database used for development and testing.
+- **MySQL**: Database used for development and testing.
+- **Liquibase** For managing and automating database migrations.
 - **JWT**: For secure token-based authentication.
 - **JUnit & Mockito**: For unit testing and mocking dependencies.
-- **Jackson**: For JSON serialization and deserialization.
+- **Docker** For containerization and environment consistency.
+- **Swagger** For API documentation and testing.
 
 ## Logging
 
