@@ -147,7 +147,7 @@ To run the application using Docker with the dev profile:
 ./gradlew clean build
 ```
 
-2. Run the application using docker-compose:
+2. Run the application using docker-compose.yml:
 
 ```bash
 docker-compose up --build
