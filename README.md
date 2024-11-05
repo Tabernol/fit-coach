@@ -132,7 +132,7 @@ To run the application locally, follow these steps:
 
 The application will now start and connect to the local MySQL database.
 
-## 2. Running the Application with Docker (Development Profile)
+### 2. Running the Application with Docker (Development Profile)
 
 To run the application using Docker with the dev profile:
 
@@ -151,3 +151,9 @@ docker-compose up --build
 This command will start the application and any required services (e.g., MySQL) using Docker, with the dev profile
 active.
 
+### 3. Viewing Metrics in Grafana
+   To monitor application metrics in Grafana:
+
+1. Make sure you have Prometheus and Grafana running in your environment.
+2. Access Grafana at http://localhost:3000 and add Prometheus as a data source.
+3. View or create dashboards to monitor metrics exposed by the application, which are available via the /actuator/prometheus endpoint.
