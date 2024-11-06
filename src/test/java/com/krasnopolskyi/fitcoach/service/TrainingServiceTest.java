@@ -20,6 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,30 +32,23 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class TrainingServiceTest {
-    @Mock
+    @MockBean
     private TrainingRepository trainingRepository;
 
-    @Mock
+    @MockBean
     private TraineeRepository traineeRepository;
 
-    @Mock
+    @MockBean
     private TrainerRepository trainerRepository;
 
-    @Mock
+    @MockBean
     private UserRepository userRepository;
-
-    @Mock
+    @Autowired
     private MeterRegistry meterRegistry;
 
-    @Mock
-    private Timer timer;
-    @Mock
-    private MeterRegistry.Config config;
-    @Mock
-    private Clock clock;
-    @InjectMocks
+    @Autowired
     private TrainingService trainingService;
 
     private Trainee mockTrainee;
@@ -64,7 +61,7 @@ class TrainingServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        trainingService = new TrainingService(trainingRepository, traineeRepository, trainerRepository, userRepository, meterRegistry);
+//        trainingService = new TrainingService(trainingRepository, traineeRepository, trainerRepository, userRepository, meterRegistry);
 
         mockUser = new User();
         mockUser.setUsername("john.doe");
@@ -87,8 +84,6 @@ class TrainingServiceTest {
         mockTrainer = new Trainer();
         mockTrainer.setUser(mockUserTrainer);
         mockTrainer.setSpecialization(new TrainingType(1, "Cardio"));
-
-        meterRegistry.config();
     }
 
     @Test
@@ -173,9 +168,9 @@ class TrainingServiceTest {
                 60);
 
         when(userRepository.findByUsername(mockTrainee.getUser().getUsername())).thenReturn(Optional.of(mockTrainee.getUser()));
-        // Mock the behavior of the MeterRegistry
-        when(meterRegistry.config()).thenReturn(config);
-        when(meterRegistry.timer(anyString())).thenReturn(timer);
+//        // Mock the behavior of the MeterRegistry
+//        when(meterRegistry.config()).thenReturn(config);
+//        when(meterRegistry.timer(anyString())).thenReturn(timer);
 
         Training training = new Training();
         training.setTrainee(mockTrainee);
@@ -217,5 +212,29 @@ class TrainingServiceTest {
         assertEquals("Could not found user: " + ownerUsername, exception.getMessage());
         verify(userRepository, times(1)).findByUsername(ownerUsername);
         verify(trainingRepository, never()).getFilteredTrainings(anyString(), anyString(), any(), any(), anyString());
+    }
+
+    @Test
+    void save_shouldThrowEntityException_whenTraineeIsInactive() {
+        // Arrange
+        mockTrainer.getUser().setIsActive(false);
+        TrainingDto trainingDto = new TrainingDto(
+                mockTrainee.getUser().getUsername(),
+                mockTrainer.getUser().getUsername(),
+                "Training1",
+                LocalDate.now(),
+                60);
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(mockTrainee));
+        when(trainerRepository.findByUsername(anyString())).thenReturn(Optional.of(mockTrainer));
+
+        // Act & Assert
+        ValidateException exception = assertThrows(ValidateException.class, () -> {
+            trainingService.save(trainingDto);
+        });
+        assertEquals("Profile " + mockTrainer.getUser().getFirstName() + " " + mockTrainer.getUser().getLastName() +
+                " is currently disabled", exception.getMessage());
+        verify(traineeRepository, times(1)).findByUsername(mockTrainee.getUser().getUsername());
+        verify(trainerRepository, times(1)).findByUsername(mockTrainer.getUser().getUsername());
+        verify(trainingRepository, never()).save(any(Training.class));
     }
 }

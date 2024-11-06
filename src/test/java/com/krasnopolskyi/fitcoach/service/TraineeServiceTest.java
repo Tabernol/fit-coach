@@ -98,6 +98,7 @@ class TraineeServiceTest {
 
     @Test
     void testFindByUsernameSuccess() throws EntityException {
+        mockTrainee.getTrainers().add(mockTrainer);
         when(traineeRepository.findByUsername("john.doe")).thenReturn(Optional.of(mockTrainee));
 
         TraineeProfileDto result = traineeService.findByUsername("john.doe");
