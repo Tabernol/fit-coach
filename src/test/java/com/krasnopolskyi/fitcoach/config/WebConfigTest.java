@@ -3,16 +3,17 @@ package com.krasnopolskyi.fitcoach.config;
 import com.krasnopolskyi.fitcoach.http.interceptor.AuthnInterceptor;
 import com.krasnopolskyi.fitcoach.http.interceptor.ControllerLogInterceptor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class WebConfigTest {
-    @MockBean
+    @Mock
     private ControllerLogInterceptor controllerLogInterceptor;
-    @MockBean
+    @Mock
     private AuthnInterceptor authnInterceptor;
 
     private WebConfig webConfig;
