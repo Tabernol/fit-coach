@@ -39,10 +39,13 @@ dependencies {
 
 
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'com.mysql:mysql-connector-j' // database MySQL for development
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation platform('org.testcontainers:testcontainers-bom:1.20.3')
+    testImplementation 'org.testcontainers:mysql'
+    testImplementation 'org.liquibase:liquibase-core'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
