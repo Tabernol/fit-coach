@@ -1,6 +1,6 @@
-package com.krasnopolskyi.fitcoach.integration;
+package com.krasnopolskyi;
 
-import com.krasnopolskyi.fitcoach.integration.annotation.IT;
+import com.krasnopolskyi.annotation.IT;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;

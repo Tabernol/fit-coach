@@ -1,8 +1,8 @@
-package com.krasnopolskyi.fitcoach.integration.service;
+package com.krasnopolskyi.service;
 
 import com.krasnopolskyi.fitcoach.entity.TrainingType;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
-import com.krasnopolskyi.fitcoach.integration.IntegrationTestBase;
+import com.krasnopolskyi.IntegrationTestBase;
 import com.krasnopolskyi.fitcoach.repository.TrainingTypeRepository;
 import com.krasnopolskyi.fitcoach.service.TrainingTypeService;
 import org.junit.jupiter.api.Test;

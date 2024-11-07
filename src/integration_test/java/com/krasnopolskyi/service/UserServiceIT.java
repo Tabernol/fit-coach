@@ -1,4 +1,4 @@
-package com.krasnopolskyi.fitcoach.integration.service;
+package com.krasnopolskyi.service;
 
 import com.krasnopolskyi.fitcoach.dto.request.ChangePasswordDto;
 import com.krasnopolskyi.fitcoach.dto.request.ToggleStatusDto;
@@ -8,7 +8,7 @@ import com.krasnopolskyi.fitcoach.entity.User;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
-import com.krasnopolskyi.fitcoach.integration.IntegrationTestBase;
+import com.krasnopolskyi.IntegrationTestBase;
 import com.krasnopolskyi.fitcoach.repository.UserRepository;
 import com.krasnopolskyi.fitcoach.service.UserService;
 import org.junit.jupiter.api.Test;

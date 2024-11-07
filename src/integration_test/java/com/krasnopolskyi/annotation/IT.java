@@ -1,4 +1,4 @@
-package com.krasnopolskyi.fitcoach.integration.annotation;
+package com.krasnopolskyi.annotation;
 
 import com.krasnopolskyi.fitcoach.FitCoachApplication;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,10 +1,10 @@
-package com.krasnopolskyi.fitcoach.integration.rest;
+package com.krasnopolskyi.rest;
 
 import com.krasnopolskyi.fitcoach.dto.request.TraineeDto;
 import com.krasnopolskyi.fitcoach.dto.request.TrainerDto;
 import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.dto.response.TraineeProfileDto;
-import com.krasnopolskyi.fitcoach.integration.IntegrationTestBase;
+import com.krasnopolskyi.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;

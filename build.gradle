@@ -17,6 +17,18 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+    integration_testImplementation.extendsFrom(testImplementation)
+    integration_testRuntimeOnly.extendsFrom(testRuntimeOnly)
+}
+
+
+sourceSets {
+    integration_test {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+        }
+    }
 }
 
 repositories {
@@ -50,4 +62,11 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform()
+    description = "Run integration tests"
+    testClassesDirs = sourceSets.integration_test.output.classesDirs
+    classpath = sourceSets.integration_test.runtimeClasspath
 }

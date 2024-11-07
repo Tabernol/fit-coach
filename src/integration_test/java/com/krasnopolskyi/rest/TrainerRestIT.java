@@ -1,8 +1,8 @@
-package com.krasnopolskyi.fitcoach.integration.rest;
+package com.krasnopolskyi.rest;
 
 import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileDto;
-import com.krasnopolskyi.fitcoach.integration.IntegrationTestBase;
+import com.krasnopolskyi.IntegrationTestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
