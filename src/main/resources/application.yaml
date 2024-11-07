@@ -2,4 +2,4 @@ spring.application.name: fit-coach
 
 spring:
   profiles:
-    active: local
+    active: dev
