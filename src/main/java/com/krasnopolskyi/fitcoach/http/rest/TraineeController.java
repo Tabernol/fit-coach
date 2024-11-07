@@ -6,10 +6,12 @@ import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileShortDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
+import com.krasnopolskyi.fitcoach.http.metric.TrackCountMetric;
 import com.krasnopolskyi.fitcoach.service.TraineeService;
 import com.krasnopolskyi.fitcoach.validation.Create;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/trainees")
 @RequiredArgsConstructor
+@Slf4j
 public class TraineeController {
     private final TraineeService traineeService;
 
@@ -31,8 +34,10 @@ public class TraineeController {
      */
     @Operation(summary = "Create a new trainee",
             description = "Creates a new trainee and returns the generated username and password for authentication.")
-    @PostMapping("/public")
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
+    @TrackCountMetric(name = "api_trainee_create",
+            description = "Number of requests to /api/v1/trainees/public endpoint")
     public ResponseEntity<UserCredentials> createTrainee(
             @Validated(Create.class) @RequestBody TraineeDto traineeDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(traineeService.save(traineeDto));
@@ -58,7 +63,7 @@ public class TraineeController {
      */
     @Operation(summary = "Get trainers not assigned to trainee",
             description = "Retrieves all trainers who have not yet had a training session with the specified trainee.")
-    @GetMapping("/{username}/not-assigned-trainers")
+    @GetMapping("/{username}/trainers/not-assigned")
     public ResponseEntity<List<TrainerProfileShortDto>> getAllActiveTrainersForTrainee(
             @PathVariable("username") String username) throws EntityException {
         return ResponseEntity.status(HttpStatus.OK).body(traineeService.findAllNotAssignedTrainersByTrainee(username));
@@ -119,7 +124,7 @@ public class TraineeController {
      */
     @Operation(summary = "Update trainee trainers",
             description = "Updates the list of trainers with whom the trainee has had training sessions.")
-    @PutMapping("/{username}/update-trainers")
+    @PutMapping("/{username}/trainers/update")
     public ResponseEntity<List<TrainerProfileShortDto>> updateTrainers(
             @PathVariable String username,
             @RequestBody List<String> trainerUsernames) throws EntityException {

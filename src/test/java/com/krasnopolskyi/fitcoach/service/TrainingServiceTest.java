@@ -10,6 +10,10 @@ import com.krasnopolskyi.fitcoach.repository.TraineeRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainingRepository;
 import com.krasnopolskyi.fitcoach.repository.UserRepository;
+import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +21,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -39,7 +47,8 @@ class TrainingServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @InjectMocks
+    private SimpleMeterRegistry meterRegistry;
+
     private TrainingService trainingService;
 
     private Trainee mockTrainee;
@@ -52,7 +61,8 @@ class TrainingServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        trainingService = new TrainingService(trainingRepository, traineeRepository, trainerRepository, userRepository);
+        meterRegistry = new SimpleMeterRegistry();
+        trainingService = new TrainingService(trainingRepository, traineeRepository, trainerRepository, userRepository, meterRegistry);
 
         mockUser = new User();
         mockUser.setUsername("john.doe");
@@ -148,6 +158,7 @@ class TrainingServiceTest {
         verify(trainingRepository, never()).save(any(Training.class));
     }
 
+
     @Test
     void getFilteredTrainings_shouldReturnListOfTrainingResponseDto_whenSuccessful() throws EntityException {
         // Arrange
@@ -159,7 +170,6 @@ class TrainingServiceTest {
                 60);
 
         when(userRepository.findByUsername(mockTrainee.getUser().getUsername())).thenReturn(Optional.of(mockTrainee.getUser()));
-
 
         Training training = new Training();
         training.setTrainee(mockTrainee);
@@ -201,5 +211,29 @@ class TrainingServiceTest {
         assertEquals("Could not found user: " + ownerUsername, exception.getMessage());
         verify(userRepository, times(1)).findByUsername(ownerUsername);
         verify(trainingRepository, never()).getFilteredTrainings(anyString(), anyString(), any(), any(), anyString());
+    }
+
+    @Test
+    void save_shouldThrowEntityException_whenTraineeIsInactive() {
+        // Arrange
+        mockTrainer.getUser().setIsActive(false);
+        TrainingDto trainingDto = new TrainingDto(
+                mockTrainee.getUser().getUsername(),
+                mockTrainer.getUser().getUsername(),
+                "Training1",
+                LocalDate.now(),
+                60);
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(mockTrainee));
+        when(trainerRepository.findByUsername(anyString())).thenReturn(Optional.of(mockTrainer));
+
+        // Act & Assert
+        ValidateException exception = assertThrows(ValidateException.class, () -> {
+            trainingService.save(trainingDto);
+        });
+        assertEquals("Profile " + mockTrainer.getUser().getFirstName() + " " + mockTrainer.getUser().getLastName() +
+                " is currently disabled", exception.getMessage());
+        verify(traineeRepository, times(1)).findByUsername(mockTrainee.getUser().getUsername());
+        verify(trainerRepository, times(1)).findByUsername(mockTrainer.getUser().getUsername());
+        verify(trainingRepository, never()).save(any(Training.class));
     }
 }

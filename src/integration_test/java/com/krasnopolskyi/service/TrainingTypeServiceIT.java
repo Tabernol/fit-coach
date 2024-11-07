@@ -1,8 +1,8 @@
-package com.krasnopolskyi.fitcoach.integration.service;
+package com.krasnopolskyi.service;
 
 import com.krasnopolskyi.fitcoach.entity.TrainingType;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
-import com.krasnopolskyi.fitcoach.integration.annotation.IT;
+import com.krasnopolskyi.IntegrationTestBase;
 import com.krasnopolskyi.fitcoach.repository.TrainingTypeRepository;
 import com.krasnopolskyi.fitcoach.service.TrainingTypeService;
 import org.junit.jupiter.api.Test;
@@ -12,8 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@IT
-public class TrainingTypeServiceIT {
+public class TrainingTypeServiceIT extends IntegrationTestBase {
 
     @Autowired
     private TrainingTypeService trainingTypeService;
@@ -48,6 +47,6 @@ public class TrainingTypeServiceIT {
         List<TrainingType> allTrainingTypes = trainingTypeService.findAll();
 
         assertNotNull(allTrainingTypes);
-        assertTrue(allTrainingTypes.size() == 5); // Depending on other test data
+        assertTrue(allTrainingTypes.size() == 5);
     }
 }

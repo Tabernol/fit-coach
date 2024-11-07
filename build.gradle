@@ -17,6 +17,18 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+    integration_testImplementation.extendsFrom(testImplementation)
+    integration_testRuntimeOnly.extendsFrom(testRuntimeOnly)
+}
+
+
+sourceSets {
+    integration_test {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+        }
+    }
 }
 
 repositories {
@@ -27,25 +39,34 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0' //swagger
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0' //swagger
+    implementation 'org.liquibase:liquibase-core' // database migrations
 
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5' //jwt
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5' //jwt
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5' //jwt
 
 
-    implementation 'com.h2database:h2:2.2.224'
-
-
-//    implementation 'org.liquibase:liquibase-core'
 	compileOnly 'org.projectlombok:lombok'
-//	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'com.mysql:mysql-connector-j' // database MySQL for development
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation platform('org.testcontainers:testcontainers-bom:1.20.3')
+    testImplementation 'org.testcontainers:mysql'
+    testImplementation 'org.liquibase:liquibase-core'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform()
+    description = "Run integration tests"
+    testClassesDirs = sourceSets.integration_test.output.classesDirs
+    classpath = sourceSets.integration_test.runtimeClasspath
 }

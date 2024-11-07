@@ -1,4 +1,4 @@
-package com.krasnopolskyi.fitcoach.integration.service;
+package com.krasnopolskyi.service;
 
 import com.krasnopolskyi.fitcoach.dto.request.*;
 import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileDto;
@@ -6,7 +6,7 @@ import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
-import com.krasnopolskyi.fitcoach.integration.annotation.IT;
+import com.krasnopolskyi.IntegrationTestBase;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
 import com.krasnopolskyi.fitcoach.service.TrainerService;
 import org.junit.jupiter.api.Test;
@@ -17,8 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@IT
-public class TrainerServiceIT {
+public class TrainerServiceIT extends IntegrationTestBase {
     @Autowired
     private TrainerService trainerService;
 

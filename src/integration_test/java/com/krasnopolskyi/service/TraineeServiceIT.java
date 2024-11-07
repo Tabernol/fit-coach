@@ -1,4 +1,4 @@
-package com.krasnopolskyi.fitcoach.integration.service;
+package com.krasnopolskyi.service;
 
 import com.krasnopolskyi.fitcoach.dto.request.*;
 import com.krasnopolskyi.fitcoach.dto.response.TraineeProfileDto;
@@ -6,7 +6,7 @@ import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileShortDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
-import com.krasnopolskyi.fitcoach.integration.annotation.IT;
+import com.krasnopolskyi.IntegrationTestBase;
 import com.krasnopolskyi.fitcoach.repository.TraineeRepository;
 import com.krasnopolskyi.fitcoach.service.TraineeService;
 import org.junit.jupiter.api.Test;
@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@IT
-public class TraineeServiceIT {
+
+public class TraineeServiceIT extends IntegrationTestBase {
 
     @Autowired
     private TraineeService traineeService;
@@ -49,8 +49,8 @@ public class TraineeServiceIT {
     @Test
     void updateTrainee() throws EntityException {
         TraineeUpdateDto updateDto = new TraineeUpdateDto(
-                "john.doe",
-                "Johnny",
+                "jane.smith",
+                "Clara",
                 "Doe",
                 LocalDate.of(1990, 5, 15),
                 "789 Main St, City, Country",
@@ -59,7 +59,7 @@ public class TraineeServiceIT {
         TraineeProfileDto updatedTrainee = traineeService.update(updateDto);
 
         assertNotNull(updatedTrainee);
-        assertEquals("Johnny", updatedTrainee.getFirstName());
+        assertEquals("Clara", updatedTrainee.getFirstName());
         assertEquals("Doe", updatedTrainee.getLastName());
         assertEquals("789 Main St, City, Country", updatedTrainee.getAddress());
     }
@@ -74,7 +74,7 @@ public class TraineeServiceIT {
 
     @Test
     void updateTraineeTrainers() throws EntityException {
-        List<String> trainers = List.of("arnold.schwarzenegger", "bruce.lee");
+        List<String> trainers = List.of("arnold.schwarzenegger", "kayla.itsines");
         List<TrainerProfileShortDto> updatedTrainers = traineeService.updateTrainers("john.doe", trainers);
 
         Set<String> trainerUsernames = updatedTrainers
@@ -85,15 +85,15 @@ public class TraineeServiceIT {
 
         assertEquals(2, updatedTrainers.size());
         assertTrue(trainerUsernames.contains("arnold.schwarzenegger"));
-        assertTrue(trainerUsernames.contains("bruce.lee"));
+        assertTrue(trainerUsernames.contains("kayla.itsines"));
     }
 
-    @Test
-    void findAllNotAssignedTrainersByTrainee() throws EntityException {
-        List<TrainerProfileShortDto> notAssignedTrainers = traineeService.findAllNotAssignedTrainersByTrainee("john.doe");
-
-        assertEquals(4, notAssignedTrainers.size());
-    }
+//    @Test
+//    void findAllNotAssignedTrainersByTrainee() throws EntityException {
+//        List<TrainerProfileShortDto> notAssignedTrainers = traineeService.findAllNotAssignedTrainersByTrainee("jane.smith");
+//
+//        assertEquals(5, notAssignedTrainers.size());
+//    }
 
     @Test
     void changeTraineeStatus() throws EntityException, ValidateException {

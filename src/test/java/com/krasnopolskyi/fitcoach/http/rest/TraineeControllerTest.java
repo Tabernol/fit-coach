@@ -59,7 +59,7 @@ class TraineeControllerTest {
         when(traineeService.save(traineeDto)).thenReturn(userCredentials);
 
         // Act & Assert (MockMvc way)
-        mockMvc.perform(post("/api/v1/trainees/public")
+        mockMvc.perform(post("/api/v1/trainees/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(traineeDto)))
                 .andExpect(status().isCreated())
@@ -103,7 +103,7 @@ class TraineeControllerTest {
         when(traineeService.findAllNotAssignedTrainersByTrainee(username)).thenReturn(trainers);
 
         // Act & Assert
-        mockMvc.perform(get("/api/v1/trainees/{username}/not-assigned-trainers", username))
+        mockMvc.perform(get("/api/v1/trainees/{username}/trainers/not-assigned", username))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].userProfileDto.username", is("trainer1")))
                 .andExpect(jsonPath("$[0].specialization", is("Specialization1")))
@@ -177,7 +177,7 @@ class TraineeControllerTest {
         when(traineeService.updateTrainers(username, trainerUsernames)).thenReturn(updatedTrainers);
 
         // Act & Assert
-        mockMvc.perform(put("/api/v1/trainees/{username}/update-trainers", username)
+        mockMvc.perform(put("/api/v1/trainees/{username}/trainers/update", username)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(trainerUsernames)))
                 .andExpect(status().isOk())
