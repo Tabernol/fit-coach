@@ -14,6 +14,7 @@ management operations. The system includes JWT authentication, and advanced logg
 - [Setup Instructions](#setup-instructions)
 - [Running the Application](#running-the-application)
 - [Health Checks and Metrics](#health-checks-and-metrics)
+- [Testing](#testing)
 
 ## Project Overview
 
@@ -208,3 +209,28 @@ Also, available at http://localhost:8080/actuator/prometheus
 3. Training Lookup Duration (service_trainings_find):
    This metric measures how much time the application takes to find all training sessions associated with a specific
    username, helping to assess the performance of the training search functionality.
+## Testing
+   Unit Testing with JUnit
+   This project uses JUnit for unit testing. Unit tests focus on verifying individual components in isolation, using Mockito for mocking dependencies. These tests ensure that the logic inside services, controllers, and utilities works as expected without external interference.
+
+### Running Unit Tests
+To run the unit tests, use the following command:
+
+```bash
+./gradlew test
+```
+Unit tests are located in src/test/java and are executed automatically during the build process.
+
+### Integration Testing with Testcontainers and MySQL
+Integration tests ensure that multiple components (e.g., services, repositories, and controllers) work together as expected. These tests run against a real MySQL database container managed by Testcontainers, which spins up a MySQL instance inside Docker.
+
+Prerequisites 
+- Docker must be installed and running.
+- Testcontainers will automatically manage the lifecycle of the MySQL container during the tests.
+### Running Integration Tests
+To run the integration tests, use the following command:
+
+```bash
+./gradlew integrationTest
+```
+Integration tests are located in src/integration_test/java. Testcontainers handles starting and stopping the MySQL container before and after the tests.
