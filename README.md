@@ -15,6 +15,7 @@ management operations. The system includes JWT authentication, and advanced logg
 - [Running the Application](#running-the-application)
 - [Health Checks and Metrics](#health-checks-and-metrics)
 - [Testing](#testing)
+- [CI Workflow with GitHub Actions](#ci-workflow-with-github-actions)
 
 ## Project Overview
 
@@ -234,3 +235,12 @@ To run the integration tests, use the following command:
 ./gradlew integrationTest
 ```
 Integration tests are located in src/integration_test/java. Testcontainers handles starting and stopping the MySQL container before and after the tests.
+
+## CI Workflow with GitHub Actions
+This project uses GitHub Actions for Continuous Integration (CI). The workflow automatically runs on every push and pull request to the main branch, ensuring that the codebase is tested and validated after every change.
+
+### Workflow Overview
+- Platform: The CI process runs on ubuntu-latest as the operating system.
+- Database: A MySQL 8 Docker service is started for running the tests, with Liquibase used to apply migrations before running tests.
+- Java Setup: The workflow uses JDK 17 for building the project and running the tests.
+- Build Tool: Gradle is used for compiling the project, running Liquibase migrations, and executing tests.
