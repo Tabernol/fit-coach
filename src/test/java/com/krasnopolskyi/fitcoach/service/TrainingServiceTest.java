@@ -13,6 +13,7 @@ import com.krasnopolskyi.fitcoach.repository.UserRepository;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,10 +46,9 @@ class TrainingServiceTest {
 
     @Mock
     private UserRepository userRepository;
-//    @Autowired
-    private MeterRegistry meterRegistry;
 
-//    @Autowired
+    private SimpleMeterRegistry meterRegistry;
+
     private TrainingService trainingService;
 
     private Trainee mockTrainee;
@@ -61,6 +61,7 @@ class TrainingServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        meterRegistry = new SimpleMeterRegistry();
         trainingService = new TrainingService(trainingRepository, traineeRepository, trainerRepository, userRepository, meterRegistry);
 
         mockUser = new User();
@@ -157,45 +158,43 @@ class TrainingServiceTest {
         verify(trainingRepository, never()).save(any(Training.class));
     }
 
-//    @Test
-//    void getFilteredTrainings_shouldReturnListOfTrainingResponseDto_whenSuccessful() throws EntityException {
-//        // Arrange
-//        TrainingDto trainingDto = new TrainingDto(
-//                mockTrainee.getUser().getUsername(),
-//                mockTrainer.getUser().getUsername(),
-//                "Training1",
-//                LocalDate.now(),
-//                60);
-//
-//        when(userRepository.findByUsername(mockTrainee.getUser().getUsername())).thenReturn(Optional.of(mockTrainee.getUser()));
-////        // Mock the behavior of the MeterRegistry
-////        when(meterRegistry.config()).thenReturn(config);
-////        when(meterRegistry.timer(anyString())).thenReturn(timer);
-//
-//        Training training = new Training();
-//        training.setTrainee(mockTrainee);
-//        training.setTrainer(mockTrainer);
-//        training.setDuration(60);
-//        training.setTrainingName("Training1");
-//        training.setDate(LocalDate.now());
-//        training.setTrainingType(mockTrainer.getSpecialization());
-//
-//        TrainingFilterDto filter = new TrainingFilterDto();
-//        filter.setOwner(mockTrainee.getUser().getUsername());
-//
-//        List<Training> trainings = List.of(training);
-//        when(trainingRepository.getFilteredTrainings(mockTrainee.getUser().getUsername(), null, null, null, null))
-//                .thenReturn(trainings);
-//
-//        // Act
-//        List<TrainingResponseDto> responseList = trainingService.getFilteredTrainings(filter);
-//
-//        // Assert
-//        assertEquals(1, responseList.size());
-//        assertEquals("Training1", responseList.get(0).trainingName());
-//        verify(userRepository, times(1)).findByUsername(mockTrainee.getUser().getUsername());
-//        verify(trainingRepository, times(1)).getFilteredTrainings(mockTrainee.getUser().getUsername(), null, null, null, null);
-//    }
+
+    @Test
+    void getFilteredTrainings_shouldReturnListOfTrainingResponseDto_whenSuccessful() throws EntityException {
+        // Arrange
+        TrainingDto trainingDto = new TrainingDto(
+                mockTrainee.getUser().getUsername(),
+                mockTrainer.getUser().getUsername(),
+                "Training1",
+                LocalDate.now(),
+                60);
+
+        when(userRepository.findByUsername(mockTrainee.getUser().getUsername())).thenReturn(Optional.of(mockTrainee.getUser()));
+
+        Training training = new Training();
+        training.setTrainee(mockTrainee);
+        training.setTrainer(mockTrainer);
+        training.setDuration(60);
+        training.setTrainingName("Training1");
+        training.setDate(LocalDate.now());
+        training.setTrainingType(mockTrainer.getSpecialization());
+
+        TrainingFilterDto filter = new TrainingFilterDto();
+        filter.setOwner(mockTrainee.getUser().getUsername());
+
+        List<Training> trainings = List.of(training);
+        when(trainingRepository.getFilteredTrainings(mockTrainee.getUser().getUsername(), null, null, null, null))
+                .thenReturn(trainings);
+
+        // Act
+        List<TrainingResponseDto> responseList = trainingService.getFilteredTrainings(filter);
+
+        // Assert
+        assertEquals(1, responseList.size());
+        assertEquals("Training1", responseList.get(0).trainingName());
+        verify(userRepository, times(1)).findByUsername(mockTrainee.getUser().getUsername());
+        verify(trainingRepository, times(1)).getFilteredTrainings(mockTrainee.getUser().getUsername(), null, null, null, null);
+    }
 
     @Test
     void getFilteredTrainings_shouldThrowEntityException_whenOwnerNotFound() {

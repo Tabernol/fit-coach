@@ -29,7 +29,6 @@ public class TrainingService {
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
     private final UserRepository userRepository;
-
     private final MeterRegistry meterRegistry;
 
     @Transactional
