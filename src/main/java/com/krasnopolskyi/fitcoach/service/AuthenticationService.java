@@ -18,9 +18,7 @@ public class AuthenticationService {
 
     public String logIn(UserCredentials userCredentials) throws EntityException, AuthnException {
         if (userServiceImpl.checkCredentials(userCredentials)) {
-            String token = jwtService.generateToken(userCredentials.username());
-            log.debug("Generated JWT Token for user: {}", userCredentials.username());
-            return token;
+            return "Authentication is successful";
         } else {
             throw new AuthnException("Invalid credentials");
         }

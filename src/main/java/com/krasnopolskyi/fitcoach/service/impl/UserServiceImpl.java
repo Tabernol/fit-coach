@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -46,18 +48,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkCredentials(UserCredentials credentials) throws EntityException {
         User user = findByUsername(credentials.username());
-        return user.getPassword().equals(credentials.password());
+        return passwordEncoder.matches(credentials.password(), user.getPassword());
+//        return user.getPassword().equals(credentials.password());
     }
 
     @Transactional
     @Override
     public User changePassword(ChangePasswordDto changePasswordDto) throws EntityException, AuthnException {
         User user = findByUsername(changePasswordDto.username());
-        if(!changePasswordDto.oldPassword().equals(user.getPassword())){
+        if(!passwordEncoder.matches(changePasswordDto.oldPassword(), user.getPassword())){
             throw new AuthnException("Bad Credentials");
         }
         validatePassword(changePasswordDto.newPassword());
-        user.setPassword(changePasswordDto.newPassword());
+        user.setPassword(passwordEncoder.encode(changePasswordDto.newPassword()));
         return userRepository.save(user);
     }
 
@@ -103,6 +106,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        return userRepository.findByUsername(username).map(user ->
+                        new org.springframework.security.core.userdetails.User(
+                                user.getUsername(),
+                                user.getPassword(),
+                                Collections.unmodifiableSet(user.getRoles())))
+                .orElseThrow(()
+                        -> new UsernameNotFoundException("Failed to retrieve user: " + username));
     }
 }
