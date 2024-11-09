@@ -3,6 +3,7 @@ package com.krasnopolskyi.fitcoach.service;
 import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +22,7 @@ class AuthenticationServiceTest {
     private AuthenticationService authenticationService;
 
     @Mock
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Mock
     private JwtService jwtService;
@@ -29,7 +30,7 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        authenticationService = new AuthenticationService(userService, jwtService);
+        authenticationService = new AuthenticationService(userServiceImpl, jwtService);
     }
 
     @Test
@@ -38,7 +39,7 @@ class AuthenticationServiceTest {
         UserCredentials credentials = new UserCredentials("testUser", "testPassword");
         String expectedToken = "testToken";
 
-        when(userService.checkCredentials(credentials)).thenReturn(true);
+        when(userServiceImpl.checkCredentials(credentials)).thenReturn(true);
         when(jwtService.generateToken(credentials.username())).thenReturn(expectedToken);
 
         // Act
@@ -53,7 +54,7 @@ class AuthenticationServiceTest {
         // Arrange
         UserCredentials credentials = new UserCredentials("testUser", "testPassword");
 
-        when(userService.checkCredentials(credentials)).thenReturn(false);
+        when(userServiceImpl.checkCredentials(credentials)).thenReturn(false);
 
         // Act & Assert
         AuthnException exception = assertThrows(AuthnException.class, () -> {

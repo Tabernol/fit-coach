@@ -7,7 +7,7 @@ import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.service.AuthenticationService;
-import com.krasnopolskyi.fitcoach.service.UserService;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,14 +19,13 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class AuthnControllerTest {
     @InjectMocks
     private AuthnController authnController;
 
     @Mock
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Mock
     private AuthenticationService authenticationService;
@@ -68,6 +67,6 @@ class AuthnControllerTest {
         assertEquals("Password has changed", response.getBody());
 
         // Verify that the userService's changePassword method is called
-        verify(userService, times(1)).changePassword(changePasswordDto);
+        verify(userServiceImpl, times(1)).changePassword(changePasswordDto);
     }
 }

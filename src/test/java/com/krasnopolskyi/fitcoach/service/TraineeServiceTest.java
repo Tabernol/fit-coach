@@ -13,6 +13,7 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.TraineeRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +42,7 @@ class TraineeServiceTest {
     private TrainerRepository trainerRepository;
 
     @Mock
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Mock
     private TrainingService trainingService;
@@ -56,7 +57,7 @@ class TraineeServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        traineeService = new TraineeService(traineeRepository, trainerRepository, userService, trainingService);
+        traineeService = new TraineeService(traineeRepository, trainerRepository, userServiceImpl, trainingService);
         // Mock User and Trainee
         mockUser = new User();
         mockUser.setUsername("john.doe");
@@ -86,7 +87,7 @@ class TraineeServiceTest {
     void testSaveTraineeSuccess() {
         TraineeDto traineeDto = new TraineeDto("John", "Doe", LocalDate.of(1990, 1, 1), "123 Test St");
 
-        when(userService.create(any(UserDto.class))).thenReturn(mockUser);
+        when(userServiceImpl.create(any(UserDto.class))).thenReturn(mockUser);
         when(traineeRepository.save(any(Trainee.class))).thenReturn(mockTrainee);
 
         UserCredentials result = traineeService.save(traineeDto);
@@ -182,7 +183,7 @@ class TraineeServiceTest {
         ToggleStatusDto statusDto = new ToggleStatusDto("john.doe", true);
 
         when(traineeRepository.findByUsername("john.doe")).thenReturn(Optional.of(mockTrainee));
-        when(userService.changeActivityStatus(any(ToggleStatusDto.class))).thenReturn(mockUser);
+        when(userServiceImpl.changeActivityStatus(any(ToggleStatusDto.class))).thenReturn(mockUser);
 
         String result = traineeService.changeStatus("john.doe", statusDto);
 

@@ -9,6 +9,7 @@ import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.repository.UserRepository;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,10 +26,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class UserServiceImplTest {
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Mock
     private UserRepository userRepository;
@@ -43,7 +44,7 @@ class UserServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        userService = new UserService(userRepository); // inject mock repository
+        userServiceImpl = new UserServiceImpl(userRepository); // inject mock repository
         // Setup mock User
         mockUser = new User();
         mockUser.setId(1L);
@@ -70,7 +71,7 @@ class UserServiceTest {
     void testCreateUser() {
         when(userRepository.findByUsername("john.doe")).thenReturn(Optional.empty());
 
-        User result = userService.create(mockUserDto);
+        User result = userServiceImpl.create(mockUserDto);
 
         assertNotNull(result);
         assertEquals(mockUserDto.firstName(), result.getFirstName());
@@ -85,7 +86,7 @@ class UserServiceTest {
         when(userRepository.findByUsername("john.doe")).thenReturn(Optional.ofNullable(mockUser));
         when(userRepository.findByUsername("john.doe1")).thenReturn(Optional.empty());
 
-        User result = userService.create(mockUserDto);
+        User result = userServiceImpl.create(mockUserDto);
 
         assertNotNull(result);
         assertEquals(mockUserDto.firstName(), result.getFirstName());
@@ -100,7 +101,7 @@ class UserServiceTest {
         when(userRepository.findByUsername("john.doe"))
                 .thenReturn(Optional.of(mockUser));
 
-        boolean isValid = userService.checkCredentials(mockCredentials);
+        boolean isValid = userServiceImpl.checkCredentials(mockCredentials);
 
         assertTrue(isValid);
     }
@@ -112,7 +113,7 @@ class UserServiceTest {
 
         UserCredentials wrongCredentials = new UserCredentials("john.doe", "wrongPassword");
 
-        boolean isValid = userService.checkCredentials(wrongCredentials);
+        boolean isValid = userServiceImpl.checkCredentials(wrongCredentials);
 
         assertFalse(isValid);
     }
@@ -123,7 +124,7 @@ class UserServiceTest {
                 .thenReturn(Optional.of(mockUser));
         when(userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
 
-        User updatedUser = userService.changePassword(mockChangePasswordDto);
+        User updatedUser = userServiceImpl.changePassword(mockChangePasswordDto);
 
         assertNotNull(updatedUser);
         assertEquals(mockChangePasswordDto.newPassword(), updatedUser.getPassword());
@@ -136,7 +137,7 @@ class UserServiceTest {
 
         ChangePasswordDto wrongOldPasswordDto = new ChangePasswordDto("john.doe", "wrongOldPassword", "newPassword123");
 
-        assertThrows(AuthnException.class, () -> userService.changePassword(wrongOldPasswordDto));
+        assertThrows(AuthnException.class, () -> userServiceImpl.changePassword(wrongOldPasswordDto));
     }
 
     @Test
@@ -145,7 +146,7 @@ class UserServiceTest {
                 .thenReturn(Optional.of(mockUser));
         when(userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
 
-        User updatedUser = userService.changeActivityStatus(mockToggleStatusDto);
+        User updatedUser = userServiceImpl.changeActivityStatus(mockToggleStatusDto);
 
         assertNotNull(updatedUser);
         assertFalse(updatedUser.getIsActive());

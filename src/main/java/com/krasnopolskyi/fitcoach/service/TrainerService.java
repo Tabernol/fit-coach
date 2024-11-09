@@ -11,6 +11,7 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import com.krasnopolskyi.fitcoach.utils.mapper.TrainerMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ import java.util.List;
 public class TrainerService {
 
     private final TrainerRepository trainerRepository;
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final TrainingTypeService trainingTypeService;
     private final TrainingService trainingService;
 
@@ -34,7 +35,7 @@ public class TrainerService {
     public UserCredentials save(TrainerDto trainerDto) throws EntityException {
         TrainingType specialization = trainingTypeService.findById(trainerDto.getSpecialization()); // receive specialization
 
-        User newUser = userService
+        User newUser = userServiceImpl
                 .create(new UserDto(trainerDto.getFirstName(),
                         trainerDto.getLastName())); //return user with firstName, lastName, username, password, isActive
         Trainer trainer = new Trainer();
@@ -80,7 +81,7 @@ public class TrainerService {
             throw new ValidateException("Username should be the same");
         }
         Trainer trainer = getByUsername(statusDto.username()); // validate is trainer exist with this name
-        User user = userService.changeActivityStatus(statusDto);
+        User user = userServiceImpl.changeActivityStatus(statusDto);
         String result = "Status of trainer " + user.getUsername() + " is " + (user.getIsActive() ? "activated": "deactivated");
         return result;
     }

@@ -3,6 +3,7 @@ package com.krasnopolskyi.fitcoach.service;
 import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,12 +12,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationService {
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final JwtService jwtService;
 
 
     public String logIn(UserCredentials userCredentials) throws EntityException, AuthnException {
-        if (userService.checkCredentials(userCredentials)) {
+        if (userServiceImpl.checkCredentials(userCredentials)) {
             String token = jwtService.generateToken(userCredentials.username());
             log.debug("Generated JWT Token for user: {}", userCredentials.username());
             return token;

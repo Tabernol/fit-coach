@@ -13,6 +13,7 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.TraineeRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import com.krasnopolskyi.fitcoach.utils.mapper.TraineeMapper;
 import com.krasnopolskyi.fitcoach.utils.mapper.TrainerMapper;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,12 @@ import java.util.stream.Collectors;
 public class TraineeService {
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final TrainingService trainingService;
 
     @Transactional
     public UserCredentials save(TraineeDto traineeDto) {
-        User newUser = userService
+        User newUser = userServiceImpl
                 .create(new UserDto(traineeDto.getFirstName(),
                         traineeDto.getLastName())); //return user with firstName, lastName, username, password, isActive
 
@@ -120,7 +121,7 @@ public class TraineeService {
             throw new ValidateException("Username should be the same");
         }
         Trainee trainee = getByUsername(statusDto.username()); // validate is trainee exist with this name
-        User user = userService.changeActivityStatus(statusDto);
+        User user = userServiceImpl.changeActivityStatus(statusDto);
         String result = "Status of trainee " + user.getUsername() + " is " + (user.getIsActive() ? "activated": "deactivated");
         return result;
     }

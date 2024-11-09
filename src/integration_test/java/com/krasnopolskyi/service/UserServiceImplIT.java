@@ -10,16 +10,16 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.IntegrationTestBase;
 import com.krasnopolskyi.fitcoach.repository.UserRepository;
-import com.krasnopolskyi.fitcoach.service.UserService;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserServiceIT extends IntegrationTestBase {
+public class UserServiceImplIT extends IntegrationTestBase {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
     private UserRepository userRepository;
@@ -28,7 +28,7 @@ public class UserServiceIT extends IntegrationTestBase {
     void create_ShouldReturnNewUser() {
         UserDto userDto = new UserDto("John", "Doe");
 
-        User createdUser = userService.create(userDto);
+        User createdUser = userServiceImpl.create(userDto);
 
         assertNotNull(createdUser);
         assertEquals("John", createdUser.getFirstName());
@@ -45,7 +45,7 @@ public class UserServiceIT extends IntegrationTestBase {
 
         EntityException thrown = assertThrows(
                 EntityException.class,
-                () -> userService.checkCredentials(credentials)
+                () -> userServiceImpl.checkCredentials(credentials)
         );
 
         assertEquals("Could not found user: nonexistent.user", thrown.getMessage());
@@ -56,7 +56,7 @@ public class UserServiceIT extends IntegrationTestBase {
 
         ChangePasswordDto changePasswordDto = new ChangePasswordDto("john.doe", "root", "newPassword");
 
-        User updatedUser = userService.changePassword(changePasswordDto);
+        User updatedUser = userServiceImpl.changePassword(changePasswordDto);
 
         assertNotNull(updatedUser);
         assertEquals("newPassword", updatedUser.getPassword());
@@ -68,7 +68,7 @@ public class UserServiceIT extends IntegrationTestBase {
 
         AuthnException thrown = assertThrows(
                 AuthnException.class,
-                () -> userService.changePassword(changePasswordDto)
+                () -> userServiceImpl.changePassword(changePasswordDto)
         );
 
         assertEquals("Bad Credentials", thrown.getMessage());
@@ -78,7 +78,7 @@ public class UserServiceIT extends IntegrationTestBase {
     void changeActivityStatus_ShouldUpdateIsActiveStatus() throws EntityException {
         ToggleStatusDto toggleStatusDto = new ToggleStatusDto("john.doe", false);
 
-        User updatedUser = userService.changeActivityStatus(toggleStatusDto);
+        User updatedUser = userServiceImpl.changeActivityStatus(toggleStatusDto);
 
         assertNotNull(updatedUser);
         assertFalse(updatedUser.getIsActive()); // User's active status should be updated
@@ -95,7 +95,7 @@ public class UserServiceIT extends IntegrationTestBase {
         existingUser.setIsActive(true);
 
         // When: a new user with the same first and last name is created
-        String newUsername = userService.create(new UserDto("John", "Doe")).getUsername();
+        String newUsername = userServiceImpl.create(new UserDto("John", "Doe")).getUsername();
 
         // Then: the new username should be "john.doe1"
         assertEquals("john.doe1", newUsername);

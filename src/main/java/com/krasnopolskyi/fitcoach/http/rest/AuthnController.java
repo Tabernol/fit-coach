@@ -5,7 +5,7 @@ import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.service.AuthenticationService;
-import com.krasnopolskyi.fitcoach.service.UserService;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import com.krasnopolskyi.fitcoach.validation.Create;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/authn")
 public class AuthnController {
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final AuthenticationService authenticationService;
 
     /**
@@ -48,7 +48,7 @@ public class AuthnController {
     public ResponseEntity<String> changePassword(
             @Validated(Create.class) @RequestBody ChangePasswordDto changePasswordDto)
             throws AuthnException, EntityException {
-        userService.changePassword(changePasswordDto);
+        userServiceImpl.changePassword(changePasswordDto);
         return ResponseEntity.status(HttpStatus.OK).body("Password has changed");
     }
 }
