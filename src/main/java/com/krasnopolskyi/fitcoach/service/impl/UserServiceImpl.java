@@ -9,11 +9,11 @@ import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.repository.UserRepository;
 import com.krasnopolskyi.fitcoach.service.UserService;
-import com.krasnopolskyi.fitcoach.utils.password_generator.PasswordGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,15 +23,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
     @Override
     public User create(UserDto userDto) {
         String username = generateUsername(userDto.firstName(), userDto.lastName());
-        String password = PasswordGenerator.generatePassword();
         User user = new User();
         user.setFirstName(userDto.firstName());
         user.setLastName(userDto.lastName());
         user.setUsername(username);
-        user.setPassword(password);
+        user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setIsActive(true);
         return user;
     }

@@ -6,6 +6,7 @@ import com.krasnopolskyi.fitcoach.dto.response.TraineeProfileDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileShortDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.dto.response.UserDto;
+import com.krasnopolskyi.fitcoach.entity.Role;
 import com.krasnopolskyi.fitcoach.entity.Trainee;
 import com.krasnopolskyi.fitcoach.entity.Trainer;
 import com.krasnopolskyi.fitcoach.entity.User;
@@ -16,6 +17,7 @@ import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
 import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import com.krasnopolskyi.fitcoach.utils.mapper.TraineeMapper;
 import com.krasnopolskyi.fitcoach.utils.mapper.TrainerMapper;
+import com.krasnopolskyi.fitcoach.utils.password_generator.PasswordGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,15 +37,17 @@ public class TraineeService {
 
     @Transactional
     public UserCredentials save(TraineeDto traineeDto) {
+        String password = PasswordGenerator.generatePassword();
         User newUser = userServiceImpl
                 .create(new UserDto(traineeDto.getFirstName(),
-                        traineeDto.getLastName())); //return user with firstName, lastName, username, password, isActive
+                        traineeDto.getLastName(), password)); //return user with firstName, lastName, username, hashedPassword, isActive
 
+        newUser.getRoles().add(Role.TRAINEE); // adds role
         Trainee trainee = TraineeMapper.mapToEntity(traineeDto, newUser);
 
         Trainee savedTrainee = traineeRepository.save(trainee);// pass to repository
         log.debug("trainee has been saved " + trainee);
-        return new UserCredentials(savedTrainee.getUser().getUsername(), savedTrainee.getUser().getPassword());
+        return new UserCredentials(savedTrainee.getUser().getUsername(), password);
     }
 
     @Transactional(readOnly = true) //generate test
