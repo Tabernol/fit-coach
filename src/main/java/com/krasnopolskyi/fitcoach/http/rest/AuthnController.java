@@ -29,11 +29,19 @@ public class AuthnController {
      */
     @Operation(summary = "User login",
             description = "Authenticates a user and returns a JWT token for further authorization.")
-    @PostMapping("/login") // better use POST method here
+    @PostMapping("/login")
     public ResponseEntity<String> login( @RequestBody UserCredentials userCredentials)
             throws EntityException, AuthnException {
         return ResponseEntity.ok(authenticationService.logIn(userCredentials));
     }
+
+    @Operation(summary = "User logout")
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout()
+            throws EntityException, AuthnException {
+        return ResponseEntity.ok().body("LOGOUT");
+    }
+
 
     /**
      * Provide possibility to change password

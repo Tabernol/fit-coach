@@ -44,13 +44,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Transactional
-    @Override
-    public boolean checkCredentials(UserCredentials credentials) throws EntityException {
-        User user = findByUsername(credentials.username());
-        return passwordEncoder.matches(credentials.password(), user.getPassword());
-//        return user.getPassword().equals(credentials.password());
-    }
+//    @Transactional
+//    @Override
+//    public boolean checkCredentials(UserCredentials credentials) throws EntityException {
+//        User user = findByUsername(credentials.username());
+//        return passwordEncoder.matches(credentials.password(), user.getPassword());
+//    }
 
     @Transactional
     @Override

@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
 public class TraineeService {
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
-    private final UserServiceImpl userServiceImpl;
+    private final UserService userService;
     private final TrainingService trainingService;
 
     @Transactional
     public UserCredentials save(TraineeDto traineeDto) {
         String password = PasswordGenerator.generatePassword();
-        User newUser = userServiceImpl
+        User newUser = userService
                 .create(new UserDto(traineeDto.getFirstName(),
                         traineeDto.getLastName(), password)); //return user with firstName, lastName, username, hashedPassword, isActive
 
@@ -125,7 +125,7 @@ public class TraineeService {
             throw new ValidateException("Username should be the same");
         }
         Trainee trainee = getByUsername(statusDto.username()); // validate is trainee exist with this name
-        User user = userServiceImpl.changeActivityStatus(statusDto);
+        User user = userService.changeActivityStatus(statusDto);
         String result = "Status of trainee " + user.getUsername() + " is " + (user.getIsActive() ? "activated": "deactivated");
         return result;
     }

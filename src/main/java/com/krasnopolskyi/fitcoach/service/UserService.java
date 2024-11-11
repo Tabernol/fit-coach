@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface UserService extends UserDetailsService {
     User create(UserDto userDto);
-    boolean checkCredentials(UserCredentials credentials) throws EntityException;
     User changePassword(ChangePasswordDto changePasswordDto) throws EntityException, AuthnException;
     User changeActivityStatus(ToggleStatusDto statusDto) throws EntityException;
 }
