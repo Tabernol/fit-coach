@@ -1,14 +1,15 @@
 package com.krasnopolskyi.fitcoach.config.security;
 
+import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.service.JwtService;
 import com.krasnopolskyi.fitcoach.service.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -32,7 +33,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        log.info("JWTAUTH_FILTER");
+
+        String requestPath = request.getRequestURI();
+
+        // Bypass JWT filter for excluded paths
+        if (isExcludedPath(requestPath)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
@@ -40,27 +48,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // missing token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.info("Header " + authHeader);
             filterChain.doFilter(request, response);
             return;
         }
 
         // checking token
         jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUserName(jwt);
+        try {
+            userEmail = jwtService.extractUserName(jwt);
 
-        if (userEmail != null
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(userEmail);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                SecurityContext context = SecurityContextHolder.createEmptyContext();
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                context.setAuthentication(authToken);
-                SecurityContextHolder.setContext(context);
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userService.loadUserByUsername(userEmail);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    SecurityContext context = SecurityContextHolder.createEmptyContext();
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    context.setAuthentication(authToken);
+                    SecurityContextHolder.setContext(context);
+                } else {
+                    log.error("JWT validation error"); // if token in black list
+                    throw new AuthnException("JWT token is expired or invalid");
+                }
             }
+            filterChain.doFilter(request, response);
+
+        } catch (AuthnException | ExpiredJwtException e) {
+            log.error("JWT token is expired", e);
+            handleExpiredTokenException(response); // Handle the exception
         }
-        filterChain.doFilter(request, response);
+    }
+
+
+    // Utility method to check if the request path should bypass the JWT filter
+    private boolean isExcludedPath(String requestPath) {
+        return SecurityConfig.FREE_PATHS.stream().anyMatch(path ->
+                requestPath.matches(path.replace("**", ".*")));
+    }
+
+    private void handleExpiredTokenException(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"error\": \"Token expired or missing\"}");
     }
 }

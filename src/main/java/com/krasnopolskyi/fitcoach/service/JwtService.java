@@ -2,18 +2,16 @@ package com.krasnopolskyi.fitcoach.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -22,7 +20,7 @@ import java.util.function.Function;
  */
 @Service
 public class JwtService {
-
+    private final Set<String> tokenBlackList = new HashSet<>(); // todo next step to do it using Redis
     //unique key for generating token
     @Value("${token.signing.key}")
     private String jwtSigningKey;
@@ -38,8 +36,15 @@ public class JwtService {
 
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        if(tokenBlackList.contains(token)){
+            return false;
+        }
         final String userName = extractUserName(token);
         return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    }
+
+    public void addToBlackList(String token){
+        tokenBlackList.add(token);
     }
 
     //return different claims from token
@@ -53,17 +58,13 @@ public class JwtService {
                 .claims(extraClaims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis())) //setting date of granting token
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1)) // the token is valid for 10 minutes
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 2)) // the token is valid for 2 minutes
                 .signWith(getSigningKey())
                 .compact();
     }
 
     //check token on Date
     private boolean isTokenExpired(String token) {
-        long l = new Date().getTime() - extractExpiration(token).getTime();
-        System.out.println("time " + l);
-
-
         return extractExpiration(token).before(new Date());
     }
 
@@ -84,5 +85,10 @@ public class JwtService {
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    @Scheduled(fixedRate = 60000)  // Clean the blacklist every 60 seconds
+    public void cleanUpBlacklist() {
+        tokenBlackList.removeIf(this::isTokenExpired);
     }
 }

@@ -2,10 +2,10 @@
 
 --changeset krasnopolskyi:1
 INSERT INTO user (first_name, last_name, username, password, is_active)
-VALUES ('John', 'Doe', 'john.doe', 'root', TRUE),
-       ('Jane', 'Smith', 'jane.smith', 'root', TRUE),
-       ('Mike', 'Tyson', 'mike.tyson', 'root', TRUE),
-       ('Serena', 'Williams', 'serena.williams', 'root', TRUE);
+VALUES ('John', 'Doe', 'john.doe', '$2a$10$AiRb/bWb1ThKjKMqL6SGO.QXIqdstaQv5EAaykVYtREioaxt7TQKS', TRUE),
+       ('Jane', 'Smith', 'jane.smith', '$2a$10$AiRb/bWb1ThKjKMqL6SGO.QXIqdstaQv5EAaykVYtREioaxt7TQKS', TRUE),
+       ('Mike', 'Tyson', 'mike.tyson', '$2a$10$AiRb/bWb1ThKjKMqL6SGO.QXIqdstaQv5EAaykVYtREioaxt7TQKS', TRUE),
+       ('Serena', 'Williams', 'serena.williams', '$2a$10$AiRb/bWb1ThKjKMqL6SGO.QXIqdstaQv5EAaykVYtREioaxt7TQKS', TRUE);
 
 --changeset krasnopolskyi:2
 INSERT INTO trainee (user_id, date_of_birth, address)

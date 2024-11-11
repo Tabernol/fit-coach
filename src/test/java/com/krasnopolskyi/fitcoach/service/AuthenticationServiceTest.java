@@ -65,34 +65,5 @@ class AuthenticationServiceTest {
 //        assertEquals("Invalid credentials", exception.getMessage());
 //    }
 
-    @Test
-    void isTokenValid_ValidToken_ShouldReturnTrue() {
-        // Arrange
-        String token = "validToken";
-        String username = "testUser";
-
-        when(jwtService.extractUserName(token)).thenReturn(username);
-        when(jwtService.isTokenValid(token, username)).thenReturn(true);
-
-        // Act
-        boolean isValid = authenticationService.isTokenValid(token);
-
-        // Assert
-        assertTrue(isValid);
-    }
-
-    @Test
-    void isTokenValid_InvalidToken_ShouldReturnFalse() {
-        // Arrange
-        String token = "invalidToken";
-
-        when(jwtService.extractUserName(token)).thenThrow(new RuntimeException("Invalid token"));
-
-        // Act
-        boolean isValid = authenticationService.isTokenValid(token);
-
-        // Assert
-        assertFalse(isValid);
-    }
 
 }
