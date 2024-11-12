@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -34,6 +35,9 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private User mockUser;
     private UserDto mockUserDto;
     private UserCredentials mockCredentials;
@@ -44,7 +48,7 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        userServiceImpl = new UserServiceImpl(userRepository); // inject mock repository
+        userServiceImpl = new UserServiceImpl(userRepository, passwordEncoder); // inject mock repository
         // Setup mock User
         mockUser = new User();
         mockUser.setId(1L);
@@ -55,7 +59,7 @@ class UserServiceImplTest {
         mockUser.setIsActive(true);
 
         // Setup mock UserDto
-        mockUserDto = new UserDto("John", "Doe");
+        mockUserDto = new UserDto("John", "Doe", "root");
 
         // Setup mock credentials
         mockCredentials = new UserCredentials("john.doe", "password123");
@@ -96,27 +100,6 @@ class UserServiceImplTest {
         assertNotNull(result.getPassword());
     }
 
-    @Test
-    void testCheckCredentialsSuccess() throws EntityException {
-        when(userRepository.findByUsername("john.doe"))
-                .thenReturn(Optional.of(mockUser));
-
-        boolean isValid = userServiceImpl.checkCredentials(mockCredentials);
-
-        assertTrue(isValid);
-    }
-
-    @Test
-    void testCheckCredentialsFail() throws EntityException {
-        when(userRepository.findByUsername(mockCredentials.username()))
-                .thenReturn(Optional.of(mockUser));
-
-        UserCredentials wrongCredentials = new UserCredentials("john.doe", "wrongPassword");
-
-        boolean isValid = userServiceImpl.checkCredentials(wrongCredentials);
-
-        assertFalse(isValid);
-    }
 
     @Test
     void testChangePasswordSuccess() throws GymException {

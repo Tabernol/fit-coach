@@ -40,6 +40,7 @@ public class TraineeController {
             description = "Number of requests to /api/v1/trainees/public endpoint")
     public ResponseEntity<UserCredentials> createTrainee(
             @Validated(Create.class) @RequestBody TraineeDto traineeDto) {
+        log.info("CREATE ====================================");
         return ResponseEntity.status(HttpStatus.CREATED).body(traineeService.save(traineeDto));
     }
 

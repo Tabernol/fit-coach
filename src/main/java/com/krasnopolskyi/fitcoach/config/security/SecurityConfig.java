@@ -26,6 +26,7 @@ public class SecurityConfig {
             "/api/v1/authn/login/**",
             "/api/v1/trainees/create",
             "/api/v1/trainers/create"
+//            "/api/v1/training-types" // Allow this end-point for creating Front-end part
     );
 
     @Bean
@@ -46,6 +47,7 @@ public class SecurityConfig {
                                 FREE_PATHS.get(0),
                                 FREE_PATHS.get(1),
                                 FREE_PATHS.get(2)
+//                                FREE_PATHS.get(3) //training-types
                                 ).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Make it stateless

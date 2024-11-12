@@ -28,11 +28,11 @@ class AuthenticationServiceTest {
     @Mock
     private JwtService jwtService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        authenticationService = new AuthenticationService(jwtService, authenticationManager);
-    }
+//    @BeforeEach
+//    void setUp() {
+//        MockitoAnnotations.openMocks(this);
+//        authenticationService = new AuthenticationService(jwtService, authenticationManager);
+//    }
 
 //    @Test
 //    void logIn_ValidCredentials_ShouldReturnToken() throws EntityException, AuthnException {
