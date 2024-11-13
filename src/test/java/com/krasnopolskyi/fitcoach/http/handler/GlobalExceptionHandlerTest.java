@@ -2,7 +2,6 @@ package com.krasnopolskyi.fitcoach.http.handler;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
-import jakarta.validation.Valid;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -10,13 +9,14 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.validation.FieldError;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -32,6 +32,8 @@ class GlobalExceptionHandlerTest {
     @Mock
     private HttpHeaders headers;
 
+    @Mock
+    private BindingResult bindingResult;
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -94,5 +96,50 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, responseEntity.getStatusCode());
         ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
         assertEquals("Validation failed", errorResponse.getMessage());
+    }
+
+    @Test
+    void testHandleMethodArgumentNotValid_withSingleFieldError() {
+        // Arrange: Prepare a mock validation error for the 'firstName' field
+        FieldError fieldError = new FieldError("traineeDto", "firstName", "First name can't be null");
+        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
+        when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
+
+        // Act: Call the handler method
+        ResponseEntity<Object> responseEntity = globalExceptionHandler.handleMethodArgumentNotValid(
+                methodArgumentNotValidException, headers, HttpStatus.UNPROCESSABLE_ENTITY, webRequest);
+
+        // Assert: Verify the response structure and content
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(responseEntity.getBody()).isInstanceOf(ErrorResponse.class);
+
+        ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+        assertThat(errorResponse).isNotNull();
+        assertThat(errorResponse.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+        assertThat(errorResponse.getMessage()).isEqualTo("Validation error. Check 'errors' field for details.");
+        assertThat(errorResponse.getErrors()).hasSize(1);
+    }
+
+    @Test
+    void testHandleMethodArgumentNotValid_withMultipleFieldErrors() {
+        // Arrange: Prepare multiple mock validation errors for 'firstName' and 'lastName' fields
+        FieldError firstNameError = new FieldError("traineeDto", "firstName", "First name can't be null");
+        FieldError lastNameError = new FieldError("traineeDto", "lastName", "Last name can't be null");
+        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
+        when(bindingResult.getFieldErrors()).thenReturn(List.of(firstNameError, lastNameError));
+
+        // Act: Call the handler method
+        ResponseEntity<Object> responseEntity = globalExceptionHandler.handleMethodArgumentNotValid(
+                methodArgumentNotValidException, headers, HttpStatus.UNPROCESSABLE_ENTITY, webRequest);
+
+        // Assert: Verify the response structure and content
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(responseEntity.getBody()).isInstanceOf(ErrorResponse.class);
+
+        ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+        assertThat(errorResponse).isNotNull();
+        assertThat(errorResponse.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+        assertThat(errorResponse.getMessage()).isEqualTo("Validation error. Check 'errors' field for details.");
+        assertThat(errorResponse.getErrors()).hasSize(2);
     }
 }

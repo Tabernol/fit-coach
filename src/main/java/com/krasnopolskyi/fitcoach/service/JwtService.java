@@ -6,7 +6,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -35,12 +34,12 @@ public class JwtService {
     }
 
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenValid(String token, String username) {
         if(tokenBlackList.contains(token)){
             return false;
         }
-        final String userName = extractUserName(token);
-        return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        final String extractedUserName = extractUserName(token);
+        return (extractedUserName.equals(username)) && !isTokenExpired(token);
     }
 
     public void addToBlackList(String token){

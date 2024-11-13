@@ -17,7 +17,6 @@ public class LoginBruteForceProtectorService {
 
 
     public void runBruteForceProtector(String username) {
-        log.info("Brute force protector");
         LoginAttempt loginAttempt = attemptsCache
                 .getOrDefault(username, new LoginAttempt(0, System.currentTimeMillis()));
         loginAttempt.incrementAttempts();
@@ -36,9 +35,11 @@ public class LoginBruteForceProtectorService {
             long currentTime = System.currentTimeMillis();
 
             if (currentTime - lastAttemptTime < BLOCK_TIME_MS) {
+                log.warn("User: " + username + ". has been blocked for a 5 minutes");
                 throw new AuthnException("Please wait " +
                         (((lastAttemptTime + BLOCK_TIME_MS) - currentTime)/1000) + " seconds before trying again");
             } else {
+                log.info("User: " + username + ". has been removed from blacklist");
                 attemptsCache.remove(username);  // Unblock after block time is over.
             }
         }

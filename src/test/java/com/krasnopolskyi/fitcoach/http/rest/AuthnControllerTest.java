@@ -8,15 +8,18 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.service.AuthenticationService;
 import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -68,5 +71,39 @@ class AuthnControllerTest {
 
         // Verify that the userService's changePassword method is called
         verify(userServiceImpl, times(1)).changePassword(changePasswordDto);
+    }
+
+    @Test
+    void logout_ShouldReturnSuccessMessage_WhenLogoutIsSuccessful() throws EntityException, AuthnException {
+        // Arrange
+        String token = "valid_token";
+        when(authenticationService.logout(anyString())).thenReturn("Logged out successfully.");
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token);
+
+        // Act
+        ResponseEntity<String> response = authnController.logout(request);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Logged out successfully.", response.getBody());
+
+        // Verify that logout was called
+        verify(authenticationService, times(1)).logout("Bearer " + token);
+    }
+
+    @Test
+    void logout_ShouldThrowAuthnException_WhenTokenIsInvalid() throws EntityException, AuthnException {
+        // Arrange
+        String token = "invalid_token";
+        when(authenticationService.logout(anyString())).thenThrow(new AuthnException("Invalid token"));
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token);
+
+        // Act & Assert
+        Exception exception = assertThrows(AuthnException.class, () -> authnController.logout(request));
+        assertEquals("Invalid token", exception.getMessage());
     }
 }

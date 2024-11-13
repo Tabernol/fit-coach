@@ -26,7 +26,7 @@ public class UserServiceImplIT extends IntegrationTestBase {
 
     @Test
     void create_ShouldReturnNewUser() {
-        UserDto userDto = new UserDto("John", "Doe");
+        UserDto userDto = new UserDto("John", "Doe", "pass");
 
         User createdUser = userServiceImpl.create(userDto);
 
@@ -37,18 +37,6 @@ public class UserServiceImplIT extends IntegrationTestBase {
         assertNotNull(createdUser.getUsername()); // Unique username should be generated
         assertNotNull(createdUser.getPassword()); // Password should be generated
         assertNotNull(createdUser.getPassword());
-    }
-
-    @Test
-    void checkCredentials_ShouldThrowEntityException_WhenUserNotFound() {
-        UserCredentials credentials = new UserCredentials("nonexistent.user", "password123");
-
-        EntityException thrown = assertThrows(
-                EntityException.class,
-                () -> userServiceImpl.checkCredentials(credentials)
-        );
-
-        assertEquals("Could not found user: nonexistent.user", thrown.getMessage());
     }
 
     @Test
@@ -95,7 +83,7 @@ public class UserServiceImplIT extends IntegrationTestBase {
         existingUser.setIsActive(true);
 
         // When: a new user with the same first and last name is created
-        String newUsername = userServiceImpl.create(new UserDto("John", "Doe")).getUsername();
+        String newUsername = userServiceImpl.create(new UserDto("John", "Doe", "pass")).getUsername();
 
         // Then: the new username should be "john.doe1"
         assertEquals("john.doe1", newUsername);

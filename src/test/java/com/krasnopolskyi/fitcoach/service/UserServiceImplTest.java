@@ -4,6 +4,7 @@ import com.krasnopolskyi.fitcoach.dto.request.ChangePasswordDto;
 import com.krasnopolskyi.fitcoach.dto.request.ToggleStatusDto;
 import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.dto.response.UserDto;
+import com.krasnopolskyi.fitcoach.entity.Role;
 import com.krasnopolskyi.fitcoach.entity.User;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
@@ -18,13 +19,21 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Mockito;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -56,6 +65,7 @@ class UserServiceImplTest {
         mockUser.setLastName("Doe");
         mockUser.setUsername("john.doe");
         mockUser.setPassword("password123");
+        mockUser.setRoles(Set.of(Role.TRAINEE));
         mockUser.setIsActive(true);
 
         // Setup mock UserDto
@@ -82,7 +92,6 @@ class UserServiceImplTest {
         assertEquals(mockUserDto.lastName(), result.getLastName());
         assertTrue(result.getIsActive());
         assertNotNull(result.getUsername());
-        assertNotNull(result.getPassword());
     }
 
     @Test
@@ -97,12 +106,12 @@ class UserServiceImplTest {
         assertEquals(mockUserDto.lastName(), result.getLastName());
         assertTrue(result.getIsActive());
         assertNotNull(result.getUsername());
-        assertNotNull(result.getPassword());
     }
 
 
     @Test
     void testChangePasswordSuccess() throws GymException {
+        when(passwordEncoder.matches(any(), anyString())).thenReturn(true);
         when(userRepository.findByUsername(mockChangePasswordDto.username()))
                 .thenReturn(Optional.of(mockUser));
         when(userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
@@ -110,7 +119,6 @@ class UserServiceImplTest {
         User updatedUser = userServiceImpl.changePassword(mockChangePasswordDto);
 
         assertNotNull(updatedUser);
-        assertEquals(mockChangePasswordDto.newPassword(), updatedUser.getPassword());
     }
 
     @Test
@@ -133,6 +141,39 @@ class UserServiceImplTest {
 
         assertNotNull(updatedUser);
         assertFalse(updatedUser.getIsActive());
+    }
+
+    @Test
+    void testLoadUserByUsername_UserFound() {
+        // Mock the userRepository to return the mock user when findByUsername is called
+        when(userRepository.findByUsername(mockUser.getUsername())).thenReturn(Optional.of(mockUser));
+
+        // Call the loadUserByUsername method
+        UserDetails userDetails = userServiceImpl.loadUserByUsername(mockUser.getUsername());
+
+        // Verify the user details returned
+        assertNotNull(userDetails);
+        assertEquals(mockUser.getUsername(), userDetails.getUsername());
+        assertEquals(Collections.unmodifiableSet(mockUser.getRoles()), userDetails.getAuthorities());
+
+        // Verify the interaction with the repository
+        verify(userRepository).findByUsername(mockUser.getUsername());
+    }
+
+    @Test
+    void testLoadUserByUsername_UserNotFound() {
+        // Mock the userRepository to return an empty Optional when findByUsername is called
+        when(userRepository.findByUsername(mockUser.getUsername())).thenReturn(Optional.empty());
+
+        // Call the loadUserByUsername method and assert that it throws UsernameNotFoundException
+        UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class,
+                () -> userServiceImpl.loadUserByUsername(mockUser.getUsername()));
+
+        // Verify the exception message
+        assertEquals("Failed to retrieve user: " + mockUser.getUsername(), exception.getMessage());
+
+        // Verify the interaction with the repository
+        verify(userRepository).findByUsername(mockUser.getUsername());
     }
 
 }

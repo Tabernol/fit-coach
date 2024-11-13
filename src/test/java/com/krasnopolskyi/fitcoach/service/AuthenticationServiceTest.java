@@ -1,8 +1,6 @@
 package com.krasnopolskyi.fitcoach.service;
 
-import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
-import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
@@ -23,47 +20,48 @@ class AuthenticationServiceTest {
     private AuthenticationService authenticationService;
 
     @Mock
+    private JwtService jwtService;
+
+    @Mock
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private JwtService jwtService;
+    private LoginBruteForceProtectorService loginProtectorService;
 
-//    @BeforeEach
-//    void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//        authenticationService = new AuthenticationService(jwtService, authenticationManager);
-//    }
+    @Mock
+    private UserServiceImpl userDetails;
 
-//    @Test
-//    void logIn_ValidCredentials_ShouldReturnToken() throws EntityException, AuthnException {
-//        // Arrange
-//        UserCredentials credentials = new UserCredentials("testUser", "testPassword");
-//        String expectedToken = "testToken";
-//
-//        when(userServiceImpl.checkCredentials(credentials)).thenReturn(true);
-//        when(jwtService.generateToken(credentials.username())).thenReturn(expectedToken);
-//
-//        // Act
-//        String actualToken = authenticationService.logIn(credentials);
-//
-//        // Assert
-//        assertEquals(expectedToken, actualToken);
-//    }
+    private final String USERNAME = "testUser";
+    private final String PASSWORD = "testPassword";
+    private final String TOKEN = "jwtToken";
+    private final String AUTH_HEADER = "Bearer jwtToken";
 
-//    @Test
-//    void logIn_InvalidCredentials_ShouldThrowAuthnException() throws EntityException {
-//        // Arrange
-//        UserCredentials credentials = new UserCredentials("testUser", "testPassword");
-//
-//        when(userServiceImpl.checkCredentials(credentials)).thenReturn(false);
-//
-//        // Act & Assert
-//        AuthnException exception = assertThrows(AuthnException.class, () -> {
-//            authenticationService.logIn(credentials);
-//        });
-//
-//        assertEquals("Invalid credentials", exception.getMessage());
-//    }
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
+
+    @Test
+    void testLogOut_NoTokenInHeader() {
+        // Call the logout method with an invalid authorization header
+        AuthnException exception = assertThrows(AuthnException.class, () -> {
+            authenticationService.logout("InvalidHeader");
+        });
+
+        // Verify behavior
+        assertEquals("Token not found in request", exception.getMessage());
+    }
+
+    @Test
+    void testLogOut_EmptyToken() {
+        // Call the logout method with an empty authorization header
+        AuthnException exception = assertThrows(AuthnException.class, () -> {
+            authenticationService.logout("Bearer ");
+        });
+
+        // Verify behavior
+        assertEquals("Token not found in request", exception.getMessage());
+    }
 
 }

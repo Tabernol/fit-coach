@@ -93,7 +93,7 @@ class TraineeServiceTest {
         UserCredentials result = traineeService.save(traineeDto);
 
         assertEquals(mockUser.getUsername(), result.username());
-        assertEquals(mockUser.getPassword(), result.password());
+        assertNotNull(result.password());
         verify(traineeRepository, times(1)).save(any(Trainee.class));
     }
 
