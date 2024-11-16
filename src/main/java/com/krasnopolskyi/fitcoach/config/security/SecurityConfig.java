@@ -50,10 +50,9 @@ public class SecurityConfig {
                         .requestMatchers(FREE_PATHS.toArray(new String[0]))
                         .permitAll()  // Permit all for specified paths
                         .anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Make it stateless
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(checkUsernameFilter, JwtAuthenticationFilter.class); // Add CheckUsernameFilter after JWT filter
-//                .httpBasic(withDefaults());
         return http.build();
     }
 

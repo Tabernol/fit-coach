@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -74,6 +75,7 @@ class GlobalExceptionHandlerTest {
     void handleAuthnException_ShouldReturnForbidden() {
         // Arrange
         AuthnException exception = new AuthnException("Authentication failed");
+        exception.setCode(403);
 
         // Act
         ResponseEntity<Object> responseEntity = globalExceptionHandler.handleAuthnException(exception, webRequest);
@@ -141,5 +143,20 @@ class GlobalExceptionHandlerTest {
         assertThat(errorResponse.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
         assertThat(errorResponse.getMessage()).isEqualTo("Validation error. Check 'errors' field for details.");
         assertThat(errorResponse.getErrors()).hasSize(2);
+    }
+
+
+    @Test
+    void handleAccessDeniedException() {
+        // Arrange
+        AccessDeniedException exception = new AccessDeniedException("Access denied");
+
+        // Act
+        ResponseEntity<Object> responseEntity = globalExceptionHandler.handleAccessDeniedException(exception, webRequest);
+
+        // Assert
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+        ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+        assertEquals("You do not have the necessary permissions to access this resource.", errorResponse.getMessage());
     }
 }

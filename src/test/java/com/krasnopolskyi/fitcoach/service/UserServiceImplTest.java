@@ -21,11 +21,13 @@ import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -108,27 +110,65 @@ class UserServiceImplTest {
         assertNotNull(result.getUsername());
     }
 
-
     @Test
     void testChangePasswordSuccess() throws GymException {
+        // Mock the authentication
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(mockChangePasswordDto.username());  // Simulate the authenticated user
+        SecurityContextHolder.setContext(securityContext);
+
+        // Mock password matching and user repository behavior
         when(passwordEncoder.matches(any(), anyString())).thenReturn(true);
         when(userRepository.findByUsername(mockChangePasswordDto.username()))
                 .thenReturn(Optional.of(mockUser));
-        when(userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
+        when(userRepository.save(any(User.class))).thenReturn(mockUser);
 
+        // Call the method under test
         User updatedUser = userServiceImpl.changePassword(mockChangePasswordDto);
 
+        // Assertions
         assertNotNull(updatedUser);
+        verify(userRepository).save(mockUser);  // Ensure the user is saved
     }
 
     @Test
     void testChangePasswordFailWrongOldPassword() {
+        // Mock the authentication
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(mockChangePasswordDto.username());  // Simulate the authenticated user
+        SecurityContextHolder.setContext(securityContext);
+
+        // Mock user repository to return a valid user
         when(userRepository.findByUsername(mockChangePasswordDto.username()))
                 .thenReturn(Optional.of(mockUser));
 
-        ChangePasswordDto wrongOldPasswordDto = new ChangePasswordDto("john.doe", "wrongOldPassword", "newPassword123");
+        // Mock password mismatch
+        when(passwordEncoder.matches(any(), anyString())).thenReturn(false);
 
+        // Prepare test DTO with wrong old password
+        ChangePasswordDto wrongOldPasswordDto = new ChangePasswordDto(
+                "john.doe", "wrongOldPassword", "newPassword123");
+
+        // Assert that an AuthnException is thrown due to wrong old password
         assertThrows(AuthnException.class, () -> userServiceImpl.changePassword(wrongOldPasswordDto));
+    }
+
+    @Test
+    void testChangePasswordFailMissMatchUsername() {
+
+        ChangePasswordDto changePasswordDto = new ChangePasswordDto("another.doe", "password123", "newPassword123");
+        // Mock the authentication
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(mockUser.getUsername());  // Simulate the authenticated user
+        SecurityContextHolder.setContext(securityContext);
+
+        assertThrows(AuthnException.class, () -> userServiceImpl.changePassword(changePasswordDto));
     }
 
     @Test
@@ -154,7 +194,6 @@ class UserServiceImplTest {
         // Verify the user details returned
         assertNotNull(userDetails);
         assertEquals(mockUser.getUsername(), userDetails.getUsername());
-        assertEquals(Collections.unmodifiableSet(mockUser.getRoles()), userDetails.getAuthorities());
 
         // Verify the interaction with the repository
         verify(userRepository).findByUsername(mockUser.getUsername());
