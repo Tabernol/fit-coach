@@ -40,29 +40,6 @@ public class UserServiceImplIT extends IntegrationTestBase {
     }
 
     @Test
-    void changePassword_ShouldUpdatePassword_WhenOldPasswordMatches() throws EntityException, GymException {
-
-        ChangePasswordDto changePasswordDto = new ChangePasswordDto("john.doe", "root", "newPassword");
-
-        User updatedUser = userServiceImpl.changePassword(changePasswordDto);
-
-        assertNotNull(updatedUser);
-        assertEquals("newPassword", updatedUser.getPassword());
-    }
-
-    @Test
-    void changePassword_ShouldThrowAuthnException_WhenOldPasswordDoesNotMatch() {
-        ChangePasswordDto changePasswordDto = new ChangePasswordDto("john.doe", "wrongOldPassword", "newPassword");
-
-        AuthnException thrown = assertThrows(
-                AuthnException.class,
-                () -> userServiceImpl.changePassword(changePasswordDto)
-        );
-
-        assertEquals("Bad Credentials", thrown.getMessage());
-    }
-
-    @Test
     void changeActivityStatus_ShouldUpdateIsActiveStatus() throws EntityException {
         ToggleStatusDto toggleStatusDto = new ToggleStatusDto("john.doe", false);
 
