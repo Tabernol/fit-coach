@@ -161,13 +161,25 @@ class TrainerServiceTest {
         when(trainerRepository.save(any(Trainer.class))).thenReturn(mockTrainer);
 
         // Act
-        TrainerProfileDto updatedProfile = trainerService.update(trainerDto);
+        TrainerProfileDto updatedProfile = trainerService.update("trainer.doe", trainerDto);
 
         // Assert
         assertNotNull(updatedProfile);
         verify(trainerRepository).findByUsername("trainer.doe");
         verify(trainerRepository).save(mockTrainer);
     }
+
+    @Test
+    public void testUpdateTrainer_Failed() throws GymException {
+        // Arrange
+        TrainerUpdateDto trainerDto = new TrainerUpdateDto("trainer.doe", "new", "Doe", "Strength", true);
+
+        assertThrows(ValidateException.class,
+                () -> trainerService.update("another.doe", trainerDto));
+
+    }
+
+
 
     @Test
     @DisplayName("Change trainer status successfully")

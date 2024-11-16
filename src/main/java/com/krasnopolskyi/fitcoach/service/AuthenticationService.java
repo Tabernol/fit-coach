@@ -4,6 +4,7 @@ import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,7 +36,9 @@ public class AuthenticationService {
 
         } catch (BadCredentialsException e) {
             loginProtectorService.runBruteForceProtector(userCredentials.username());
-            throw new AuthnException("Invalid credentials", e);
+            AuthnException authnException = new AuthnException("Invalid credentials");
+            authnException.setCode(HttpStatus.UNAUTHORIZED.value());
+            throw authnException;
         }
     }
 
@@ -45,7 +48,9 @@ public class AuthenticationService {
             jwtService.addToBlackList(token);
             return "Logged out successfully.";
         } else {
-            throw new AuthnException("Token not found in request");
+            AuthnException authnException = new AuthnException("Token not found in request");
+            authnException.setCode(HttpStatus.UNAUTHORIZED.value());
+            throw authnException;
         }
     }
 

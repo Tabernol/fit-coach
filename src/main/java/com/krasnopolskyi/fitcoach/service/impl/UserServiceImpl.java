@@ -2,7 +2,6 @@ package com.krasnopolskyi.fitcoach.service.impl;
 
 import com.krasnopolskyi.fitcoach.dto.request.ChangePasswordDto;
 import com.krasnopolskyi.fitcoach.dto.request.ToggleStatusDto;
-import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.dto.response.UserDto;
 import com.krasnopolskyi.fitcoach.entity.User;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
@@ -11,13 +10,19 @@ import com.krasnopolskyi.fitcoach.repository.UserRepository;
 import com.krasnopolskyi.fitcoach.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -44,19 +49,20 @@ public class UserServiceImpl implements UserService {
     }
 
 
-//    @Transactional
-//    @Override
-//    public boolean checkCredentials(UserCredentials credentials) throws EntityException {
-//        User user = findByUsername(credentials.username());
-//        return passwordEncoder.matches(credentials.password(), user.getPassword());
-//    }
-
     @Transactional
     @Override
     public User changePassword(ChangePasswordDto changePasswordDto) throws EntityException, AuthnException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info(authentication.getName() + " === " + changePasswordDto.username());
+        if(!authentication.getName().equals(changePasswordDto.username())){
+            throw new AuthnException("You do not have the necessary permissions to access this resource.");
+        }
         User user = findByUsername(changePasswordDto.username());
+
         if(!passwordEncoder.matches(changePasswordDto.oldPassword(), user.getPassword())){
-            throw new AuthnException("Bad Credentials");
+            AuthnException authnException = new AuthnException("Bad Credentials");
+            authnException.setCode(HttpStatus.UNAUTHORIZED.value());
+            throw authnException;
         }
         validatePassword(changePasswordDto.newPassword());
         user.setPassword(passwordEncoder.encode(changePasswordDto.newPassword()));
@@ -105,12 +111,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).map(user ->
-                        new org.springframework.security.core.userdetails.User(
-                                user.getUsername(),
-                                user.getPassword(),
-                                Collections.unmodifiableSet(user.getRoles())))
-                .orElseThrow(()
-                        -> new UsernameNotFoundException("Failed to retrieve user: " + username));
+        return userRepository.findByUsername(username)
+                .map(user -> {
+                    Set<GrantedAuthority> authorities = user.getRoles().stream()
+                            .map(role -> new SimpleGrantedAuthority(role.getAuthority()))  // Convert Role to GrantedAuthority
+                            .collect(Collectors.toSet());
+
+                    return new org.springframework.security.core.userdetails.User(
+                            user.getUsername(),
+                            user.getPassword(),
+                            authorities);  // Pass GrantedAuthorities to UserDetails
+                })
+                .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user: " + username));
     }
 }

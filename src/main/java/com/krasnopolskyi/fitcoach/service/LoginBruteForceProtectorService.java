@@ -4,6 +4,7 @@ import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -36,8 +37,10 @@ public class LoginBruteForceProtectorService {
 
             if (currentTime - lastAttemptTime < BLOCK_TIME_MS) {
                 log.warn("User: " + username + ". has been blocked for a 5 minutes");
-                throw new AuthnException("Please wait " +
+                AuthnException authnException = new AuthnException("Please wait " +
                         (((lastAttemptTime + BLOCK_TIME_MS) - currentTime)/1000) + " seconds before trying again");
+                authnException.setCode(HttpStatus.FORBIDDEN.value());
+                throw authnException;
             } else {
                 log.info("User: " + username + ". has been removed from blacklist");
                 attemptsCache.remove(username);  // Unblock after block time is over.

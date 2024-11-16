@@ -12,12 +12,10 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
-import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import com.krasnopolskyi.fitcoach.utils.mapper.TrainerMapper;
 import com.krasnopolskyi.fitcoach.utils.password_generator.PasswordGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,7 +64,10 @@ public class TrainerService {
 
 
     @Transactional
-    public TrainerProfileDto update(TrainerUpdateDto trainerDto) throws GymException {
+    public TrainerProfileDto update(String username, TrainerUpdateDto trainerDto) throws GymException {
+        if(!username.equals(trainerDto.username())){
+            throw new ValidateException("Username should be the same");
+        }
         Trainer trainer = getByUsername(trainerDto.username());
         //update user's fields
         User user = trainer.getUser();

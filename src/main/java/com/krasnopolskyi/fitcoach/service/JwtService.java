@@ -57,7 +57,7 @@ public class JwtService {
                 .claims(extraClaims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis())) //setting date of granting token
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 2)) // the token is valid for 2 minutes
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)) // the token is valid for 10 minutes
                 .signWith(getSigningKey())
                 .compact();
     }

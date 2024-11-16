@@ -14,7 +14,6 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.TraineeRepository;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
-import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import com.krasnopolskyi.fitcoach.utils.mapper.TraineeMapper;
 import com.krasnopolskyi.fitcoach.utils.mapper.TrainerMapper;
 import com.krasnopolskyi.fitcoach.utils.password_generator.PasswordGenerator;
@@ -56,7 +55,10 @@ public class TraineeService {
     }
 
     @Transactional
-    public TraineeProfileDto update(TraineeUpdateDto traineeDto) throws EntityException {
+    public TraineeProfileDto update(String username, TraineeUpdateDto traineeDto) throws EntityException, ValidateException {
+        if(!username.equals(traineeDto.username())){
+            throw new ValidateException("Username should be the same");
+        }
         // find trainee entity
         Trainee trainee = getByUsername(traineeDto.username());
         //update trainee's fields

@@ -1,13 +1,13 @@
 package com.krasnopolskyi.fitcoach.exception;
 
-import org.springframework.security.authentication.BadCredentialsException;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class AuthnException extends GymException {
+    private int code;
     public AuthnException(String message) {
         super(message);
-    }
-
-    public AuthnException(String message, Throwable cause) {
-        super(message, cause);
     }
 }

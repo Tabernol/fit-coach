@@ -29,6 +29,7 @@ public class TraineeController {
 
     /**
      * Provides public end-point for creating trainee
+     *
      * @param traineeDto dto with user fields
      * @return credentials for authentication generated username and password
      */
@@ -40,7 +41,6 @@ public class TraineeController {
             description = "Number of requests to /api/v1/trainees/public endpoint")
     public ResponseEntity<UserCredentials> createTrainee(
             @Validated(Create.class) @RequestBody TraineeDto traineeDto) {
-        log.info("CREATE ====================================");
         return ResponseEntity.status(HttpStatus.CREATED).body(traineeService.save(traineeDto));
     }
 
@@ -58,6 +58,7 @@ public class TraineeController {
 
     /**
      * Provides end-point for retrieve data about all trainers with whom current trainee did not have training session
+     *
      * @param username is unique name of trainee
      * @return List of trainers in short format
      * @throws EntityException will be throw if trainee does not exist with such username, but trainer profile can exist
@@ -72,10 +73,11 @@ public class TraineeController {
 
     /**
      * provides filtering functionality for training sessions of trainee
-     * @param username target trainee for searching
-     * @param periodFrom date from
-     * @param periodTo date to
-     * @param partner trainer
+     *
+     * @param username     target trainee for searching
+     * @param periodFrom   date from
+     * @param periodTo     date to
+     * @param partner      trainer
      * @param trainingType type of training
      * @return List of trainings otherwise empty list
      * @throws EntityException will be thrown if target username does not exist as trainee
@@ -104,21 +106,25 @@ public class TraineeController {
 
     /**
      * Update trainee fields
+     *
      * @param traineeDto Dto
      * @return Dto with other fields
      * @throws EntityException will be throw if trainee does not exist with such username
      */
     @Operation(summary = "Update trainee profile",
             description = "Updates the trainee profile with the provided details.")
-    @PutMapping()
+    @PutMapping("/{username}")
     public ResponseEntity<TraineeProfileDto> updateTrainee(
-            @Validated(Create.class) @RequestBody TraineeUpdateDto traineeDto) throws EntityException {
-        return ResponseEntity.status(HttpStatus.OK).body(traineeService.update(traineeDto));
+            @PathVariable("username") String username,
+            @Validated(Create.class) @RequestBody TraineeUpdateDto traineeDto)
+            throws EntityException, ValidateException {
+        return ResponseEntity.status(HttpStatus.OK).body(traineeService.update(username, traineeDto));
     }
 
     /**
      * Update list of trainers with whom trainee has training session
-     * @param username of target trainee
+     *
+     * @param username         of target trainee
      * @param trainerUsernames List with usernames of trainers
      * @return List of trainers
      * @throws EntityException will be thrown if username of trainee or trainer does not exist
@@ -134,10 +140,11 @@ public class TraineeController {
 
     /**
      * Provides functionality for changing trainee status
-     * @param username of target trainee
+     *
+     * @param username  of target trainee
      * @param statusDto dto with username and status
      * @return message of result this action
-     * @throws EntityException if username does not exist
+     * @throws EntityException   if username does not exist
      * @throws ValidateException if username in pathVariable and in body are different
      */
     @Operation(summary = "Toggle trainee status",

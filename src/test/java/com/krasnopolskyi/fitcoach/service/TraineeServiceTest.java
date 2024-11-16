@@ -116,16 +116,24 @@ class TraineeServiceTest {
     }
 
     @Test
-    void testUpdateTraineeSuccess() throws EntityException {
+    void testUpdateTraineeSuccess() throws EntityException, ValidateException {
         TraineeUpdateDto traineeUpdateDto = new TraineeUpdateDto("john.doe", "John", "Doe", LocalDate.of(1990, 1, 1), "456 New St", true);
 
         when(traineeRepository.findByUsername("john.doe")).thenReturn(Optional.of(mockTrainee));
         when(traineeRepository.save(any(Trainee.class))).thenReturn(mockTrainee);
 
-        TraineeProfileDto result = traineeService.update(traineeUpdateDto);
+        TraineeProfileDto result = traineeService.update("john.doe", traineeUpdateDto);
 
         assertEquals(traineeUpdateDto.address(), result.getAddress());
         verify(traineeRepository, times(1)).save(any(Trainee.class));
+    }
+
+    @Test
+    void testUpdateTraineeFailed() throws EntityException, ValidateException {
+        TraineeUpdateDto traineeUpdateDto = new TraineeUpdateDto("john.doe", "John", "Doe", LocalDate.of(1990, 1, 1), "456 New St", true);
+
+        assertThrows(ValidateException.class,
+                () -> {traineeService.update("another.doe", traineeUpdateDto);});
     }
 
     @Test

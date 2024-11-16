@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -150,10 +151,10 @@ class TraineeControllerTest {
                 .trainers(null)
                 .build();
 
-        when(traineeService.update(traineeUpdateDto)).thenReturn(updatedProfile);
+        when(traineeService.update("john.doe", traineeUpdateDto)).thenReturn(updatedProfile);
 
         // Act & Assert
-        mockMvc.perform(put("/api/v1/trainees")
+        mockMvc.perform(put("/api/v1/trainees/{username}", traineeUpdateDto.username())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(traineeUpdateDto)))
                 .andExpect(status().isOk())
