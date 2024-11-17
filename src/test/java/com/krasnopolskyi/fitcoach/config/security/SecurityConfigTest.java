@@ -1,6 +1,6 @@
 package com.krasnopolskyi.fitcoach.config.security;
 
-import org.junit.jupiter.api.BeforeEach;
+import com.krasnopolskyi.fitcoach.config.security.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

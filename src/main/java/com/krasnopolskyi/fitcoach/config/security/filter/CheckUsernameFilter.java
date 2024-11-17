@@ -1,5 +1,6 @@
-package com.krasnopolskyi.fitcoach.config.security;
+package com.krasnopolskyi.fitcoach.config.security.filter;
 
+import com.krasnopolskyi.fitcoach.config.security.SecurityConfig;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

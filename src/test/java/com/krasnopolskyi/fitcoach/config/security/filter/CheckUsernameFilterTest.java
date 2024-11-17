@@ -1,24 +1,18 @@
-package com.krasnopolskyi.fitcoach.config.security;
+package com.krasnopolskyi.fitcoach.config.security.filter;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.krasnopolskyi.fitcoach.config.security.SecurityConfig;
+import com.krasnopolskyi.fitcoach.config.security.filter.CheckUsernameFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 

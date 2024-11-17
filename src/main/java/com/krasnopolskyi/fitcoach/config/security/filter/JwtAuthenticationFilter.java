@@ -1,5 +1,6 @@
-package com.krasnopolskyi.fitcoach.config.security;
+package com.krasnopolskyi.fitcoach.config.security.filter;
 
+import com.krasnopolskyi.fitcoach.config.security.SecurityConfig;
 import com.krasnopolskyi.fitcoach.service.JwtService;
 import com.krasnopolskyi.fitcoach.service.UserService;
 import io.jsonwebtoken.JwtException;

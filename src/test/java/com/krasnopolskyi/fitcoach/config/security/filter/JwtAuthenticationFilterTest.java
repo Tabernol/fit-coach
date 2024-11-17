@@ -1,7 +1,8 @@
-package com.krasnopolskyi.fitcoach.config.security;
+package com.krasnopolskyi.fitcoach.config.security.filter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.krasnopolskyi.fitcoach.config.security.filter.JwtAuthenticationFilter;
 import com.krasnopolskyi.fitcoach.service.JwtService;
 import com.krasnopolskyi.fitcoach.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,19 +17,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
 
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class JwtAuthenticationFilterTest {

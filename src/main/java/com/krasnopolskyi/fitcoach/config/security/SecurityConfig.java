@@ -1,5 +1,7 @@
 package com.krasnopolskyi.fitcoach.config.security;
 
+import com.krasnopolskyi.fitcoach.config.security.filter.CheckUsernameFilter;
+import com.krasnopolskyi.fitcoach.config.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
