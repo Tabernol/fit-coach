@@ -35,7 +35,7 @@ class JwtServiceTest {
         ReflectionTestUtils.setField(jwtService, "jwtSigningKey", testJwtSigningKey);
 
         // Generate a test token for the test cases
-        generatedToken = jwtService.generateToken(testUsername);
+        generatedToken = jwtService.generateToken(userDetails);
     }
 
     @Test
@@ -85,7 +85,7 @@ class JwtServiceTest {
 
     @Test
     void testIsTokenValid_TokenExpired() {
-        String token = jwtService.generateToken(testUsername);
+        String token = jwtService.generateToken(userDetails);
 
         // Verify behavior and result
         assertTrue(jwtService.isTokenValid(token, testUsername));  // Token is expired

@@ -25,4 +25,12 @@ VALUES ((SELECT id FROM user WHERE username = 'arnold.schwarzenegger'),
        ((SELECT id FROM user WHERE username = 'kayla.itsines'),
         (SELECT id FROM training_type WHERE training_type_name = 'HIIT'));
 
+--changeset krasnopolskyi:3
+INSERT INTO user_roles (user_id, role)
+VALUES ((SELECT id FROM user WHERE username = 'arnold.schwarzenegger'),'TRAINER'),
+       ((SELECT id FROM user WHERE username = 'usain.bolt'), 'TRAINER'),
+       ((SELECT id FROM user WHERE username = 'jillian.michaels'), 'TRAINER'),
+       ((SELECT id FROM user WHERE username = 'rich.froning'), 'TRAINER'),
+       ((SELECT id FROM user WHERE username = 'kayla.itsines'), 'TRAINER');
+
 

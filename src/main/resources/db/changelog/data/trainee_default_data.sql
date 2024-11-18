@@ -13,3 +13,10 @@ VALUES ((SELECT id FROM user WHERE username = 'john.doe'), '1990-05-15', '123 Ma
        ((SELECT id FROM user WHERE username = 'jane.smith'), '1985-08-22', '456 Oak St, City, Country'),
        ((SELECT id FROM user WHERE username = 'mike.tyson'), '1966-06-30', '789 Pine St, City, Country'),
        ((SELECT id FROM user WHERE username = 'serena.williams'), '1981-09-26', '202 Cedar St, City, Country');
+
+--changeset krasnopolskyi:3
+INSERT INTO user_roles (user_id, role)
+VALUES ((SELECT id FROM user WHERE username = 'john.doe'), 'TRAINEE'),
+       ((SELECT id FROM user WHERE username = 'jane.smith'), 'TRAINEE'),
+       ((SELECT id FROM user WHERE username = 'mike.tyson'), 'TRAINEE'),
+       ((SELECT id FROM user WHERE username = 'serena.williams'), 'TRAINEE');

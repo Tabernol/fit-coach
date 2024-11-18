@@ -32,7 +32,9 @@ public class CheckUsernameFilter extends OncePerRequestFilter {
         String authenticatedUsername = getAuthenticatedUsername();
         String inRequestUsername = extractUsernameFromRequest(request);
 
-        if (inRequestUsername != null && !authenticatedUsername.equals(inRequestUsername)) {
+        if (inRequestUsername != null &&
+                authenticatedUsername != null &&
+                !authenticatedUsername.equals(inRequestUsername)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json");
             response.getWriter().write("{ \"status\": " + HttpStatus.FORBIDDEN.value() + "," +

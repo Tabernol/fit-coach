@@ -53,9 +53,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User changePassword(ChangePasswordDto changePasswordDto) throws EntityException, AuthnException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info(authentication.getName() + " === " + changePasswordDto.username());
+
         if(!authentication.getName().equals(changePasswordDto.username())){
-            throw new AuthnException("You do not have the necessary permissions to access this resource.");
+            AuthnException exception = new AuthnException("You do not have the necessary permissions to access this resource.");
+            exception.setCode(403);
+            throw exception;
         }
         User user = findByUsername(changePasswordDto.username());
 
@@ -113,14 +115,10 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .map(user -> {
-                    Set<GrantedAuthority> authorities = user.getRoles().stream()
-                            .map(role -> new SimpleGrantedAuthority(role.getAuthority()))  // Convert Role to GrantedAuthority
-                            .collect(Collectors.toSet());
-
                     return new org.springframework.security.core.userdetails.User(
                             user.getUsername(),
                             user.getPassword(),
-                            authorities);  // Pass GrantedAuthorities to UserDetails
+                            user.getRoles());  // Pass GrantedAuthorities to UserDetails
                 })
                 .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user: " + username));
     }

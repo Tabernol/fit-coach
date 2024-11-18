@@ -8,6 +8,7 @@ import com.krasnopolskyi.fitcoach.entity.Trainee;
 import com.krasnopolskyi.fitcoach.entity.Trainer;
 import com.krasnopolskyi.fitcoach.entity.Training;
 import com.krasnopolskyi.fitcoach.entity.User;
+import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.*;
@@ -16,6 +17,8 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +35,8 @@ public class TrainingService {
     private final MeterRegistry meterRegistry;
 
     @Transactional
-    public TrainingResponseDto save(TrainingDto trainingDto) throws EntityException, ValidateException {
+    public TrainingResponseDto save(TrainingDto trainingDto) throws EntityException, ValidateException, AuthnException {
+        validate(trainingDto);
         Trainee trainee = traineeRepository.findByUsername(trainingDto.getTraineeUsername())
                 .orElseThrow(() -> new EntityException("Could not find trainee with " + trainingDto.getTraineeUsername()));
 
@@ -91,5 +95,30 @@ public class TrainingService {
                 .register(meterRegistry));
 
         return trainings;
+    }
+
+    private void validate(TrainingDto trainingDto) throws AuthnException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Ensure authentication is present and valid
+        if (authentication == null || authentication.getName() == null) {
+            AuthnException exception = new AuthnException("Authentication information is missing.");
+            exception.setCode(401);
+            throw exception;
+        }
+
+        String authenticatedUser = authentication.getName();
+
+        // Check if the authenticated user matches the trainee or trainer username
+        if (!isUserAuthorized(authenticatedUser, trainingDto)) {
+            AuthnException exception = new AuthnException("You do not have the necessary permissions to access this resource.");
+            exception.setCode(403);
+            throw exception;
+        }
+    }
+
+    private boolean isUserAuthorized(String authenticatedUser, TrainingDto trainingDto) {
+        return authenticatedUser.equals(trainingDto.getTraineeUsername()) ||
+                authenticatedUser.equals(trainingDto.getTrainerUsername());
     }
 }

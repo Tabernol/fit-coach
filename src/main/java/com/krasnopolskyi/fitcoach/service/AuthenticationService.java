@@ -32,7 +32,7 @@ public class AuthenticationService {
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-            return jwtService.generateToken(userDetails.getUsername());
+            return jwtService.generateToken(userDetails);
 
         } catch (BadCredentialsException e) {
             loginProtectorService.runBruteForceProtector(userCredentials.username());

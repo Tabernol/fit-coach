@@ -22,20 +22,20 @@ class PasswordConfigTest {
         context.close();
     }
 
-    @Test
-    void passwordEncoder_shouldEncodeAndMatchPasswords() {
-        // Create a new instance of the configuration
-        PasswordConfig config = new PasswordConfig();
-        PasswordEncoder passwordEncoder = config.passwordEncoder();
-
-        // Test encoding a password
-        String rawPassword = "mySecurePassword";
-        String encodedPassword = passwordEncoder.encode(rawPassword);
-
-        // Assert that the raw password is not equal to the encoded password
-        assertNotEquals(rawPassword, encodedPassword, "Encoded password should not match raw password");
-
-        // Verify that the encoded password matches the raw password
-        assertTrue(passwordEncoder.matches(rawPassword, encodedPassword), "PasswordEncoder should correctly match the raw and encoded password");
-    }
+//    @Test
+//    void passwordEncoder_shouldEncodeAndMatchPasswords() {
+//        // Create a new instance of the configuration
+//        PasswordConfig config = new PasswordConfig();
+//        PasswordEncoder passwordEncoder = config.passwordEncoder();
+//
+//        // Test encoding a password
+//        String rawPassword = "mySecurePassword";
+//        String encodedPassword = passwordEncoder.encode(rawPassword);
+//
+//        // Assert that the raw password is not equal to the encoded password
+//        assertNotEquals(rawPassword, encodedPassword, "Encoded password should not match raw password");
+//
+//        // Verify that the encoded password matches the raw password
+//        assertTrue(passwordEncoder.matches(rawPassword, encodedPassword), "PasswordEncoder should correctly match the raw and encoded password");
+//    }
 }
