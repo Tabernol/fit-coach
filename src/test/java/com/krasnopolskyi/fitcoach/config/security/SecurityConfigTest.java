@@ -24,17 +24,17 @@ class SecurityConfigTest {
     @Mock
     private HttpSecurity httpSecurity;
 
-//    @Test
-//    void testAuthenticationManager() throws Exception {
-//        // Mocking AuthenticationConfiguration
-//        AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
-//        AuthenticationConfiguration mockConfig = mock(AuthenticationConfiguration.class);
-//
-//        when(mockConfig.getAuthenticationManager()).thenReturn(mockAuthenticationManager);
-//
-//        AuthenticationManager result = securityConfig.authenticationManager(mockConfig);
-//
-//        // Verify the result
-//        assertEquals(mockAuthenticationManager, result, "AuthenticationManager should match the mocked instance");
-//    }
+    @Test
+    void testAuthenticationManager() throws Exception {
+        // Mocking AuthenticationConfiguration
+        AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
+        AuthenticationConfiguration mockConfig = mock(AuthenticationConfiguration.class);
+
+        when(mockConfig.getAuthenticationManager()).thenReturn(mockAuthenticationManager);
+
+        AuthenticationManager result = securityConfig.authenticationManager(mockConfig);
+
+        // Verify the result
+        assertEquals(mockAuthenticationManager, result, "AuthenticationManager should match the mocked instance");
+    }
 }

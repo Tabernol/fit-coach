@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -33,7 +34,7 @@ class JwtServiceTest {
 
         // Inject the signing key via reflection
         ReflectionTestUtils.setField(jwtService, "jwtSigningKey", testJwtSigningKey);
-
+        Mockito.when(userDetails.getUsername()).thenReturn(testUsername);
         // Generate a test token for the test cases
         generatedToken = jwtService.generateToken(userDetails);
     }

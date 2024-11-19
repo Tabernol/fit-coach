@@ -10,11 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,14 +32,16 @@ class AuthenticationServiceTest {
     @Mock
     private JwtService jwtService;
 
-    @Mock
-    private AuthenticationManager authenticationManager;
+//    @Mock
+//    private AuthenticationManager authenticationManager;
 
     @Mock
     private LoginBruteForceProtectorService loginProtectorService;
 
+//    @Mock
+//    private Authentication authentication;
     @Mock
-    private UserServiceImpl userDetails;
+    private UserDetails userDetails;
 
     private final String USERNAME = "testUser";
     private final String PASSWORD = "testPassword";

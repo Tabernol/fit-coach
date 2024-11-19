@@ -4,6 +4,7 @@ import com.krasnopolskyi.fitcoach.dto.request.TrainingDto;
 import com.krasnopolskyi.fitcoach.dto.request.TrainingFilterDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.entity.*;
+import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.TraineeRepository;
@@ -25,6 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -88,7 +92,7 @@ class TrainingServiceTest {
     }
 
     @Test
-    void save_shouldReturnTrainingResponseDto_whenSuccessful() throws EntityException, ValidateException {
+    void save_shouldReturnTrainingResponseDto_whenSuccessful() throws EntityException, ValidateException, AuthnException {
         // Arrange
 
         TrainingDto trainingDto = new TrainingDto(
@@ -124,6 +128,14 @@ class TrainingServiceTest {
                 "Training1",
                 LocalDate.now(),
                 60);
+        // Mock the SecurityContext and Authentication
+        Authentication mockAuthentication = mock(Authentication.class);
+        when(mockAuthentication.getName()).thenReturn("trainer.doe");
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuthentication);
+
+        // Set the mock SecurityContext into the SecurityContextHolder
+        SecurityContextHolder.setContext(mockSecurityContext);
         when(traineeRepository.findByUsername(mockTrainee.getUser().getUsername())).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -145,8 +157,15 @@ class TrainingServiceTest {
                 LocalDate.now(),
                 60);
 
-        Trainee trainee = new Trainee();
-        when(traineeRepository.findByUsername(mockTrainee.getUser().getUsername())).thenReturn(Optional.of(trainee));
+        // Mock the SecurityContext and Authentication
+        Authentication mockAuthentication = mock(Authentication.class);
+        when(mockAuthentication.getName()).thenReturn("john.doe");
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuthentication);
+
+        // Set the mock SecurityContext into the SecurityContextHolder
+        SecurityContextHolder.setContext(mockSecurityContext);
+        when(traineeRepository.findByUsername(mockTrainee.getUser().getUsername())).thenReturn(Optional.of(mockTrainee));
         when(trainerRepository.findByUsername(mockTrainer.getUser().getUsername())).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -223,6 +242,14 @@ class TrainingServiceTest {
                 "Training1",
                 LocalDate.now(),
                 60);
+        // Mock the SecurityContext and Authentication
+        Authentication mockAuthentication = mock(Authentication.class);
+        when(mockAuthentication.getName()).thenReturn("trainer.doe");
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuthentication);
+
+        // Set the mock SecurityContext into the SecurityContextHolder
+        SecurityContextHolder.setContext(mockSecurityContext);
         when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(mockTrainee));
         when(trainerRepository.findByUsername(anyString())).thenReturn(Optional.of(mockTrainer));
 
@@ -235,5 +262,58 @@ class TrainingServiceTest {
         verify(traineeRepository, times(1)).findByUsername(mockTrainee.getUser().getUsername());
         verify(trainerRepository, times(1)).findByUsername(mockTrainer.getUser().getUsername());
         verify(trainingRepository, never()).save(any(Training.class));
+    }
+
+
+    @Test
+    void save_shouldThrowAuthunException() {
+        // Arrange
+        mockTrainer.getUser().setIsActive(false);
+        TrainingDto trainingDto = new TrainingDto(
+                mockTrainee.getUser().getUsername(),
+                mockTrainer.getUser().getUsername(),
+                "Training1",
+                LocalDate.now(),
+                60);
+        // Mock the SecurityContext and Authentication
+        Authentication mockAuthentication = mock(Authentication.class);
+        when(mockAuthentication.getName()).thenReturn("another.doe"); // Simulate the authenticated username
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuthentication);
+
+        // Set the mock SecurityContext into the SecurityContextHolder
+        SecurityContextHolder.setContext(mockSecurityContext);
+
+        // Act & Assert
+        AuthnException exception = assertThrows(AuthnException.class, () -> {
+            trainingService.save(trainingDto);
+        });
+        assertEquals("You do not have the necessary permissions to access this resource.", exception.getMessage());
+    }
+
+    @Test
+    void save_shouldThrowAuthunException_AthunNull() {
+        // Arrange
+        mockTrainer.getUser().setIsActive(false);
+        TrainingDto trainingDto = new TrainingDto(
+                mockTrainee.getUser().getUsername(),
+                mockTrainer.getUser().getUsername(),
+                "Training1",
+                LocalDate.now(),
+                60);
+        // Mock the SecurityContext and Authentication
+        Authentication mockAuthentication = mock(Authentication.class);
+        when(mockAuthentication.getName()).thenReturn(null );
+        SecurityContext mockSecurityContext = mock(SecurityContext.class);
+        when(mockSecurityContext.getAuthentication()).thenReturn(mockAuthentication);
+
+        // Set the mock SecurityContext into the SecurityContextHolder
+        SecurityContextHolder.setContext(mockSecurityContext);
+
+        // Act & Assert
+        AuthnException exception = assertThrows(AuthnException.class, () -> {
+            trainingService.save(trainingDto);
+        });
+        assertEquals("Authentication information is missing.", exception.getMessage());
     }
 }
