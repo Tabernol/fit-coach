@@ -16,6 +16,7 @@ management operations. The system includes JWT authentication, and advanced logg
 - [Health Checks and Metrics](#health-checks-and-metrics)
 - [Testing](#testing)
 - [CI Workflow with GitHub Actions](#ci-workflow-with-github-actions)
+- [Security](#security)
 
 ## Project Overview
 
@@ -244,3 +245,15 @@ This project uses GitHub Actions for Continuous Integration (CI). The workflow a
 - Database: A MySQL 8 Docker service is started for running the tests, with Liquibase used to apply migrations before running tests.
 - Java Setup: The workflow uses JDK 17 for building the project and running the tests.
 - Build Tool: Gradle is used for compiling the project, running Liquibase migrations, and executing tests.
+
+### Security
+The application uses JWT-based authentication to secure all endpoints except for registration and login. Key security features include:
+
+- Login: Users receive a JWT token upon successful authentication.
+- Logout: When a user logs out, their token is 'blacklisted' and no longer valid
+- Brute Force protector: Block user for 5 minutes on 3 unsuccessful logins.
+- Token Validation: A custom filter verifies the JWT token for each request.
+- Custom Filter: A custom filter checks the authenticated user and username in the path and denies access if they do not match
+- Role-based Access Control: Profile and training management operations are restricted based on user roles (trainee, trainer).
+- Password Management: Passwords are securely stored using hashing, with endpoints for changing passwords.
+- CORS Configuration: Cross-Origin Resource Sharing (CORS) is configured to allow requests from specific origins (e.g., http://localhost:3000) with allowed methods such as GET, POST, PUT, and DELETE, and credentials like cookies are permitted.

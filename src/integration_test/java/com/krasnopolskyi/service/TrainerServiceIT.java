@@ -61,7 +61,7 @@ public class TrainerServiceIT extends IntegrationTestBase {
                 "Bodybuilding",
                 true
         );
-        TrainerProfileDto updatedTrainer = trainerService.update(updateDto);
+        TrainerProfileDto updatedTrainer = trainerService.update("arnold.schwarzenegger", updateDto);
 
         assertNotNull(updatedTrainer);
         assertEquals("Arnold", updatedTrainer.firstName());

@@ -2,6 +2,7 @@ package com.krasnopolskyi.fitcoach.http.rest;
 
 import com.krasnopolskyi.fitcoach.dto.request.TrainingDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
+import com.krasnopolskyi.fitcoach.exception.AuthnException;
 import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.service.TrainingService;
@@ -34,7 +35,7 @@ public class TrainingController {
     public ResponseEntity<TrainingResponseDto> addTraining(
             @Validated(Create.class)
             @RequestBody TrainingDto trainingDto)
-            throws EntityException, ValidateException {
+            throws EntityException, ValidateException, AuthnException {
         return ResponseEntity.status(HttpStatus.CREATED).body(trainingService.save(trainingDto));
     }
 }

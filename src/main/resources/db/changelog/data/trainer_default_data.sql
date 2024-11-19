@@ -2,11 +2,11 @@
 
 --changeset krasnopolskyi:1
 INSERT INTO user (first_name, last_name, username, password, is_active)
-VALUES ('Arnold', 'Schwarzenegger', 'arnold.schwarzenegger', 'root', TRUE),
-       ('Usain', 'Bolt', 'usain.bolt', 'root', TRUE),
-       ('Jillian', 'Michaels', 'jillian.michaels', 'root', TRUE),
-       ('Rich', 'Froning', 'rich.froning', 'root', TRUE),
-       ('Kayla', 'Itsines', 'kayla.itsines', 'root', TRUE);
+VALUES ('Arnold', 'Schwarzenegger', 'arnold.schwarzenegger', '$2a$10$AiRb/bWb1ThKjKMqL6SGO.QXIqdstaQv5EAaykVYtREioaxt7TQKS', TRUE),
+       ('Usain', 'Bolt', 'usain.bolt', '$2a$10$AiRb/bWb1ThKjKMqL6SGO.QXIqdstaQv5EAaykVYtREioaxt7TQKS', TRUE),
+       ('Jillian', 'Michaels', 'jillian.michaels', '$2a$10$AiRb/bWb1ThKjKMqL6SGO.QXIqdstaQv5EAaykVYtREioaxt7TQKS', TRUE),
+       ('Rich', 'Froning', 'rich.froning', '$2a$10$AiRb/bWb1ThKjKMqL6SGO.QXIqdstaQv5EAaykVYtREioaxt7TQKS', TRUE),
+       ('Kayla', 'Itsines', 'kayla.itsines', '$2a$10$AiRb/bWb1ThKjKMqL6SGO.QXIqdstaQv5EAaykVYtREioaxt7TQKS', TRUE);
 
 --changeset krasnopolskyi:2
 INSERT INTO trainer (user_id, specialization_id)
@@ -24,5 +24,13 @@ VALUES ((SELECT id FROM user WHERE username = 'arnold.schwarzenegger'),
 
        ((SELECT id FROM user WHERE username = 'kayla.itsines'),
         (SELECT id FROM training_type WHERE training_type_name = 'HIIT'));
+
+--changeset krasnopolskyi:3
+INSERT INTO user_roles (user_id, role)
+VALUES ((SELECT id FROM user WHERE username = 'arnold.schwarzenegger'),'TRAINER'),
+       ((SELECT id FROM user WHERE username = 'usain.bolt'), 'TRAINER'),
+       ((SELECT id FROM user WHERE username = 'jillian.michaels'), 'TRAINER'),
+       ((SELECT id FROM user WHERE username = 'rich.froning'), 'TRAINER'),
+       ((SELECT id FROM user WHERE username = 'kayla.itsines'), 'TRAINER');
 
 

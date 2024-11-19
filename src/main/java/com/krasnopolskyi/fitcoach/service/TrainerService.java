@@ -4,6 +4,7 @@ import com.krasnopolskyi.fitcoach.dto.request.*;
 import com.krasnopolskyi.fitcoach.dto.response.TrainerProfileDto;
 import com.krasnopolskyi.fitcoach.dto.response.TrainingResponseDto;
 import com.krasnopolskyi.fitcoach.dto.response.UserDto;
+import com.krasnopolskyi.fitcoach.entity.Role;
 import com.krasnopolskyi.fitcoach.entity.Trainer;
 import com.krasnopolskyi.fitcoach.entity.TrainingType;
 import com.krasnopolskyi.fitcoach.entity.User;
@@ -12,6 +13,7 @@ import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
 import com.krasnopolskyi.fitcoach.utils.mapper.TrainerMapper;
+import com.krasnopolskyi.fitcoach.utils.password_generator.PasswordGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,17 +34,19 @@ public class TrainerService {
 
     @Transactional
     public UserCredentials save(TrainerDto trainerDto) throws EntityException {
+        String password = PasswordGenerator.generatePassword();
         TrainingType specialization = trainingTypeService.findById(trainerDto.getSpecialization()); // receive specialization
 
         User newUser = userService
                 .create(new UserDto(trainerDto.getFirstName(),
-                        trainerDto.getLastName())); //return user with firstName, lastName, username, password, isActive
+                        trainerDto.getLastName(), password)); //return user with firstName, lastName, username, hashedPassword, isActive
+        newUser.getRoles().add(Role.TRAINER); // adds role
         Trainer trainer = new Trainer();
         trainer.setUser(newUser);
         trainer.setSpecialization(specialization);
 
         Trainer saveTrainer = trainerRepository.save(trainer);// save entity
-        return new UserCredentials(saveTrainer.getUser().getUsername(), saveTrainer.getUser().getPassword());
+        return new UserCredentials(saveTrainer.getUser().getUsername(), password);
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +64,10 @@ public class TrainerService {
 
 
     @Transactional
-    public TrainerProfileDto update(TrainerUpdateDto trainerDto) throws GymException {
+    public TrainerProfileDto update(String username, TrainerUpdateDto trainerDto) throws GymException {
+        if(!username.equals(trainerDto.username())){
+            throw new ValidateException("Username should be the same");
+        }
         Trainer trainer = getByUsername(trainerDto.username());
         //update user's fields
         User user = trainer.getUser();

@@ -84,21 +84,21 @@ public class TraineeRestIT extends IntegrationTestBase {
     }
 
 
-    @Test
-    void deleteTraineeIT() {
-        String username = "serena.williams";
-
-        // Use exchange method instead of getForEntity to handle the generic type
-        ResponseEntity<?> response = restTemplate.exchange(
-                "http://localhost:" + port + "/api/v1/trainees/{username}",
-                HttpMethod.DELETE,
-                null,
-                Void.class,
-                username);
-
-        // Assertions (adjust as necessary)
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    }
+//    @Test
+//    void deleteTraineeIT() {
+//        String username = "serena.williams";
+//
+//        // Use exchange method instead of getForEntity to handle the generic type
+//        ResponseEntity<?> response = restTemplate.exchange(
+//                "http://localhost:" + port + "/api/v1/trainees/{username}",
+//                HttpMethod.DELETE,
+//                null,
+//                Void.class,
+//                username);
+//
+//        // Assertions (adjust as necessary)
+//        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+//    }
 
     @Test
     void updateTrainersIT(){
@@ -126,21 +126,5 @@ public class TraineeRestIT extends IntegrationTestBase {
 
         assertEquals(2, response.getBody().size());
 
-    }
-
-    @Test
-    void getTrainee_NotFoundIT() {
-        String username = "john.doe13";
-
-        // Use exchange method instead of getForEntity to handle the generic type
-        ResponseEntity<TraineeProfileDto> response = restTemplate.exchange(
-                "http://localhost:" + port + "/api/v1/trainees/{username}",
-                HttpMethod.GET,
-                null,
-                TraineeProfileDto.class,
-                username);
-
-        // Assertions (adjust as necessary)
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

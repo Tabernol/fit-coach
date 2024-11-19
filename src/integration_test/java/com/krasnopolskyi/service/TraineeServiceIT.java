@@ -47,7 +47,7 @@ public class TraineeServiceIT extends IntegrationTestBase {
     }
 
     @Test
-    void updateTrainee() throws EntityException {
+    void updateTrainee() throws EntityException, ValidateException {
         TraineeUpdateDto updateDto = new TraineeUpdateDto(
                 "jane.smith",
                 "Clara",
@@ -56,7 +56,7 @@ public class TraineeServiceIT extends IntegrationTestBase {
                 "789 Main St, City, Country",
                 true
         );
-        TraineeProfileDto updatedTrainee = traineeService.update(updateDto);
+        TraineeProfileDto updatedTrainee = traineeService.update("jane.smith", updateDto);
 
         assertNotNull(updatedTrainee);
         assertEquals("Clara", updatedTrainee.getFirstName());

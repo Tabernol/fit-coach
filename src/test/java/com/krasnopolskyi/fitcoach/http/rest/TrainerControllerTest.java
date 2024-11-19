@@ -104,10 +104,10 @@ class TrainerControllerTest {
         TrainerUpdateDto trainerUpdateDto = new TrainerUpdateDto("john.doe","John", "Doe",  "Cardio", true);
         TrainerProfileDto updatedTrainerProfileDto = new TrainerProfileDto("John", "Doe", "john.doe", "Cardio", true, new ArrayList<>());
 
-        when(trainerService.update(any())).thenReturn(updatedTrainerProfileDto);
+        when(trainerService.update(anyString(), any())).thenReturn(updatedTrainerProfileDto);
 
         // Act
-        ResponseEntity<TrainerProfileDto> response = trainerController.updateTrainer(trainerUpdateDto);
+        ResponseEntity<TrainerProfileDto> response = trainerController.updateTrainer("john.doe", trainerUpdateDto);
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());

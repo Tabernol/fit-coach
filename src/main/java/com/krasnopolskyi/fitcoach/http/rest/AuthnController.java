@@ -8,7 +8,9 @@ import com.krasnopolskyi.fitcoach.service.AuthenticationService;
 import com.krasnopolskyi.fitcoach.service.UserService;
 import com.krasnopolskyi.fitcoach.validation.Create;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,11 +31,23 @@ public class AuthnController {
      */
     @Operation(summary = "User login",
             description = "Authenticates a user and returns a JWT token for further authorization.")
-    @PostMapping("/login") // better use POST method here
+    @PostMapping("/login")
     public ResponseEntity<String> login( @RequestBody UserCredentials userCredentials)
             throws EntityException, AuthnException {
-        return ResponseEntity.ok(authenticationService.logIn(userCredentials));
+        String token = authenticationService.logIn(userCredentials);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);  // Set the token in Authorization header
+        return ResponseEntity.ok().headers(headers).body(token);
     }
+
+    @Operation(summary = "User logout")
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request)
+            throws EntityException, AuthnException {
+        authenticationService.logout(request.getHeader("Authorization"));
+        return ResponseEntity.ok().body("Logged out successfully.");
+    }
+
 
     /**
      * Provide possibility to change password

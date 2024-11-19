@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ public class TrainerController {
      */
     @Operation(summary = "Get trainer profile by username",
             description = "Fetches the profile information of a trainer based on the provided username.")
+    @PreAuthorize("hasAuthority('TRAINER')")
     @GetMapping("/{username}")
     public ResponseEntity<TrainerProfileDto> getTrainer(@PathVariable("username") String username) throws EntityException {
         return ResponseEntity.status(HttpStatus.OK).body(trainerService.findByUsername(username));
@@ -50,6 +52,7 @@ public class TrainerController {
      */
     @Operation(summary = "Filter trainings by trainer",
             description = "Filters the training sessions for a trainer based on optional parameters like period and partner (trainee).")
+    @PreAuthorize("hasAuthority('TRAINER')")
     @GetMapping("/{username}/trainings")
     public ResponseEntity<List<TrainingResponseDto>> findTraining(
             @PathVariable String username,
@@ -77,7 +80,6 @@ public class TrainerController {
     @Operation(summary = "Create a new trainer",
             description = "Creates a new trainer profile, returning the generated credentials for authentication.")
     @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
     @TrackCountMetric(name = "api_trainer_create",
             description = "Number of requests to /api/v1/trainers/public endpoint")
     public ResponseEntity<UserCredentials> createTrainer(
@@ -93,11 +95,13 @@ public class TrainerController {
      */
     @Operation(summary = "Update trainer profile",
             description = "Updates an existing trainer's profile with new information.")
-    @PutMapping()
-    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('TRAINER')")
+    @PutMapping("/{username}")
     public ResponseEntity<TrainerProfileDto> updateTrainer(
-            @Validated(Create.class) @RequestBody TrainerUpdateDto trainerDto) throws GymException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(trainerService.update(trainerDto));
+            @PathVariable("username") String username,
+            @Validated(Create.class) @RequestBody TrainerUpdateDto trainerDto)
+            throws GymException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(trainerService.update(username, trainerDto));
     }
 
     /**
@@ -110,6 +114,7 @@ public class TrainerController {
      */
     @Operation(summary = "Toggle trainer status",
             description = "Toggles the active status of a trainer based on the provided username and status information.")
+    @PreAuthorize("hasAuthority('TRAINER')")
     @PatchMapping("/{username}/toggle-status")
     public ResponseEntity<String> toggleStatus(
             @PathVariable("username") String username,

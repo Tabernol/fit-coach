@@ -12,6 +12,7 @@ import com.krasnopolskyi.fitcoach.exception.EntityException;
 import com.krasnopolskyi.fitcoach.exception.GymException;
 import com.krasnopolskyi.fitcoach.exception.ValidateException;
 import com.krasnopolskyi.fitcoach.repository.TrainerRepository;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class TrainerServiceTest {
     private TrainerRepository trainerRepository;
 
     @Mock
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Mock
     private TrainingTypeService trainingTypeService;
@@ -54,7 +55,7 @@ class TrainerServiceTest {
 
     @BeforeEach
     public void setUp() {
-        trainerService = new TrainerService(trainerRepository, userService, trainingTypeService, trainingService);
+        trainerService = new TrainerService(trainerRepository, userServiceImpl, trainingTypeService, trainingService);
 
         // Mock User and Trainee
         mockUser = new User();
@@ -96,7 +97,7 @@ class TrainerServiceTest {
 
 
         when(trainingTypeService.findById(1)).thenReturn(trainingType);
-        when(userService.create(any(UserDto.class))).thenReturn(newUser);
+        when(userServiceImpl.create(any(UserDto.class))).thenReturn(newUser);
         when(trainerRepository.save(any(Trainer.class))).thenAnswer(invocation -> {
             Trainer trainer = invocation.getArgument(0);
             trainer.setId(1L);
@@ -111,7 +112,7 @@ class TrainerServiceTest {
         assertEquals("john.gold", credentials.username());
         verify(trainerRepository).save(any(Trainer.class));
         verify(trainingTypeService).findById(1);
-        verify(userService).create(any(UserDto.class));
+        verify(userServiceImpl).create(any(UserDto.class));
     }
 
     @Test
@@ -160,13 +161,25 @@ class TrainerServiceTest {
         when(trainerRepository.save(any(Trainer.class))).thenReturn(mockTrainer);
 
         // Act
-        TrainerProfileDto updatedProfile = trainerService.update(trainerDto);
+        TrainerProfileDto updatedProfile = trainerService.update("trainer.doe", trainerDto);
 
         // Assert
         assertNotNull(updatedProfile);
         verify(trainerRepository).findByUsername("trainer.doe");
         verify(trainerRepository).save(mockTrainer);
     }
+
+    @Test
+    public void testUpdateTrainer_Failed() throws GymException {
+        // Arrange
+        TrainerUpdateDto trainerDto = new TrainerUpdateDto("trainer.doe", "new", "Doe", "Strength", true);
+
+        assertThrows(ValidateException.class,
+                () -> trainerService.update("another.doe", trainerDto));
+
+    }
+
+
 
     @Test
     @DisplayName("Change trainer status successfully")
@@ -177,7 +190,7 @@ class TrainerServiceTest {
 
         when(trainerRepository.findByUsername("trainer.doe")).thenReturn(Optional.of(mockTrainer));
         mockUserTrainer.setIsActive(false);
-        when(userService.changeActivityStatus(statusDto)).thenReturn(mockUserTrainer);
+        when(userServiceImpl.changeActivityStatus(statusDto)).thenReturn(mockUserTrainer);
 
         // Act
         String result = trainerService.changeStatus("trainer.doe", statusDto);
@@ -186,7 +199,7 @@ class TrainerServiceTest {
         assertNotNull(result);
         assertTrue(result.contains("deactivated"));
         verify(trainerRepository).findByUsername("trainer.doe");
-        verify(userService).changeActivityStatus(statusDto);
+        verify(userServiceImpl).changeActivityStatus(statusDto);
     }
 
     @Test

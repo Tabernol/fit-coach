@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -84,14 +85,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @param request   The current web request.
      * @return ResponseEntity with a response for EntityException.
      */
-    @ExceptionHandler(EntityException.class)
+    @ExceptionHandler({EntityException.class, RuntimeException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Object> handleNoSuchElementFoundException(
             EntityException exception, WebRequest request) {
         // set errors message and content to request attribute for further reading in interceptor
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), exception.getMessage());
         passMessageToControllerLogInterceptor(request, errorResponse);
-        log.warn("Failed to find the requested entity check passed id", exception);
+        log.error("Failed: ", exception);
         return buildErrorResponse(exception, HttpStatus.NOT_FOUND, request);
     }
 
@@ -101,10 +102,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleAuthnException(
             AuthnException exception, WebRequest request) {
         // set errors message and content to request attribute for further reading in interceptor
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN.value(), exception.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(exception.getCode(), exception.getMessage());
         passMessageToControllerLogInterceptor(request, errorResponse);
         log.warn("Authentication problem ", exception);
-        return buildErrorResponse(exception, HttpStatus.FORBIDDEN, request);
+        return buildErrorResponse(exception, HttpStatus.valueOf(exception.getCode()), request);
     }
 
 
@@ -124,6 +125,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(exception, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        // Log the access denied exception
+        log.warn("Access denied: {}", ex.getMessage());
+
+        // Return a custom response for access denied
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                new ErrorResponse(HttpStatus.FORBIDDEN.value(), "You do not have the necessary permissions to access this resource.")
+        );
+    }
 
     /**
      * Builds a generic error response based on the provided exception, HTTP status, and web request.

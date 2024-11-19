@@ -2,7 +2,7 @@ package com.krasnopolskyi.fitcoach.service;
 
 import com.krasnopolskyi.fitcoach.dto.request.UserCredentials;
 import com.krasnopolskyi.fitcoach.exception.AuthnException;
-import com.krasnopolskyi.fitcoach.exception.EntityException;
+import com.krasnopolskyi.fitcoach.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,9 +10,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
@@ -21,76 +30,55 @@ class AuthenticationServiceTest {
     private AuthenticationService authenticationService;
 
     @Mock
-    private UserService userService;
+    private JwtService jwtService;
+
+//    @Mock
+//    private AuthenticationManager authenticationManager;
 
     @Mock
-    private JwtService jwtService;
+    private LoginBruteForceProtectorService loginProtectorService;
+
+//    @Mock
+//    private Authentication authentication;
+    @Mock
+    private UserDetails userDetails;
+
+    private final String USERNAME = "testUser";
+    private final String PASSWORD = "testPassword";
+    private final String TOKEN = "jwtToken";
+    private final String AUTH_HEADER = "Bearer jwtToken";
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        authenticationService = new AuthenticationService(userService, jwtService);
     }
 
-    @Test
-    void logIn_ValidCredentials_ShouldReturnToken() throws EntityException, AuthnException {
-        // Arrange
-        UserCredentials credentials = new UserCredentials("testUser", "testPassword");
-        String expectedToken = "testToken";
-
-        when(userService.checkCredentials(credentials)).thenReturn(true);
-        when(jwtService.generateToken(credentials.username())).thenReturn(expectedToken);
-
-        // Act
-        String actualToken = authenticationService.logIn(credentials);
-
-        // Assert
-        assertEquals(expectedToken, actualToken);
-    }
 
     @Test
-    void logIn_InvalidCredentials_ShouldThrowAuthnException() throws EntityException {
-        // Arrange
-        UserCredentials credentials = new UserCredentials("testUser", "testPassword");
-
-        when(userService.checkCredentials(credentials)).thenReturn(false);
-
-        // Act & Assert
+    void testLogOut_NoTokenInHeader() {
+        // Call the logout method with an invalid authorization header
         AuthnException exception = assertThrows(AuthnException.class, () -> {
-            authenticationService.logIn(credentials);
+            authenticationService.logout("InvalidHeader");
         });
 
-        assertEquals("Invalid credentials", exception.getMessage());
+        // Verify behavior
+        assertEquals("Token not found in request", exception.getMessage());
     }
 
     @Test
-    void isTokenValid_ValidToken_ShouldReturnTrue() {
-        // Arrange
-        String token = "validToken";
-        String username = "testUser";
+    void testLogOut_EmptyToken() {
+        // Call the logout method with an empty authorization header
+        AuthnException exception = assertThrows(AuthnException.class, () -> {
+            authenticationService.logout("Bearer ");
+        });
 
-        when(jwtService.extractUserName(token)).thenReturn(username);
-        when(jwtService.isTokenValid(token, username)).thenReturn(true);
-
-        // Act
-        boolean isValid = authenticationService.isTokenValid(token);
-
-        // Assert
-        assertTrue(isValid);
+        // Verify behavior
+        assertEquals("Token not found in request", exception.getMessage());
     }
 
     @Test
-    void isTokenValid_InvalidToken_ShouldReturnFalse() {
-        // Arrange
-        String token = "invalidToken";
-
-        when(jwtService.extractUserName(token)).thenThrow(new RuntimeException("Invalid token"));
-
-        // Act
-        boolean isValid = authenticationService.isTokenValid(token);
-
-        // Assert
-        assertFalse(isValid);
+    void logout_tokenNotNull() throws AuthnException {
+        String result = authenticationService.logout("Bearer notNullToken");
+        assertEquals("Logged out successfully.", result);
     }
-
 }
