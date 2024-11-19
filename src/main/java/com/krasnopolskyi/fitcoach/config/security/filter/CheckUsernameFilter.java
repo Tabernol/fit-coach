@@ -39,6 +39,7 @@ public class CheckUsernameFilter extends OncePerRequestFilter {
             response.setContentType("application/json");
             response.getWriter().write("{ \"status\": " + HttpStatus.FORBIDDEN.value() + "," +
                     "\"message\": \"You do not have the necessary permissions to access this resource.\"}");
+            log.warn("authenticated user" + authenticatedUsername + " tried to access resource: " + requestPath);
         } else {
             filterChain.doFilter(request, response); // Allow the request to proceed
         }
